@@ -1,0 +1,43 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+	<file>assets/fonts/Roboto-Black.ttf</file>
+	<file>assets/fonts/Roboto-BlackItalic.ttf</file>
+	<file>assets/fonts/Roboto-Bold.ttf</file>
+	<file>assets/fonts/Roboto-BoldItalic.ttf</file>
+	<file>assets/fonts/Roboto-Italic.ttf</file>
+	<file>assets/fonts/Roboto-Light.ttf</file>
+	<file>assets/fonts/Roboto-LightItalic.ttf</file>
+	<file>assets/fonts/Roboto-Medium.ttf</file>
+	<file>assets/fonts/Roboto-MediumItalic.ttf</file>
+	<file>assets/fonts/Roboto-Regular.ttf</file>
+	<file>assets/fonts/Roboto-Thin.ttf</file>
+	<file>assets/fonts/Roboto-ThinItalic.ttf</file>
+	<file>assets/fonts/RobotoCondensed-Bold.ttf</file>
+	<file>assets/fonts/RobotoCondensed-BoldItalic.ttf</file>
+	<file>assets/fonts/RobotoCondensed-Italic.ttf</file>
+	<file>assets/fonts/RobotoCondensed-Light.ttf</file>
+	<file>assets/fonts/RobotoCondensed-LightItalic.ttf</file>
+	<file>assets/fonts/RobotoCondensed-Regular.ttf</file>
+	<file>assets/images/MenuIconTrash.png</file>
+	<file>assets/images/MenuIconSettings.png</file>
+	<file>assets/images/MenuIconEdit.png</file>
+	<file>assets/images/MenuIconCheck.png</file>
+	<file>assets/images/MenuIconAdd.png</file>
+	<file>assets/images/MenuIconVisibility.png</file>
+	<file>assets/images/MenuIconExit.png</file>
+	<file>assets/images/MenuIconHome.png</file>
+	<file>assets/images/MenuIconRefresh.png</file>
+	<file>assets/images/MenuIconGrid.png</file>
+	<file>assets/images/MenuIconScreen.png</file>
+	<file>assets/images/MenuIconView.png</file>
+	<file>assets/images/MenuIconSave.png</file>
+	<file>assets/images/MenuIconOpen.png</file>
+	<file>assets/images/MenuIconLog.png</file>
+	<file>assets/images/MenuIconNew.png</file>
+	<file>assets/images/MenuIconNetwork.png</file>
+	<file>assets/images/IconQuestion.png</file>
+	<file>assets/images/IconWarning.png</file>
+	<file>assets/images/ETCLogo.png</file>
+	<file>assets/images/SystemTrayIcon.png</file>
+</qresource>
+</RCC>
