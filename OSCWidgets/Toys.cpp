@@ -65,7 +65,6 @@ Toy* Toys::AddToy(Toy::EnumToyType type)
 		if( !m_Loading )
 		{
 			toy->showNormal();
-			UpdateWindowFlags();
 			BuildRecvWidgetsTable();
 			toy->raise();
 		}
