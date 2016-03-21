@@ -230,7 +230,8 @@ bool ToyWidget::Load(EosLog &log, const QString &path, QStringList &lines, int &
 		Utils::GetItemsFromQuotedString(lines[index++], items);
 
 		if(items.size() > 0)
-			SetVisible(items[0].toInt() != 0);
+			m_Visible = (items[0].toInt() != 0);
+		UpdateVisible();
 
 		if(items.size() > 1)
 			SetPath( items[1] );

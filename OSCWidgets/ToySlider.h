@@ -117,7 +117,7 @@ private slots:
 	
 protected:
 	virtual ToyWidget* CreateWidget();
-	virtual QSize GetDefaultWidgetSize() const {return QSize(60,250);}	
+	virtual QSize GetDefaultWidgetSize() const {return QSize(60,250);}
 };
 
 ////////////////////////////////////////////////////////////////////////////////

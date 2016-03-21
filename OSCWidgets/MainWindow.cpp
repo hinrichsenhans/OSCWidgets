@@ -25,7 +25,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define APP_VERSION	"0.1"
+#define APP_VERSION	"0.2"
 
 #define MIN_OPACITY 10
 
@@ -1231,7 +1231,7 @@ void MainWindow::onMenuClearLabels()
 
 void MainWindow::onSettingsAddToy(int type)
 {
-	m_Toys->AddToy(static_cast<Toy::EnumToyType>(type), /*buildRecvWidgetsTable*/true);
+	m_Toys->AddToy( static_cast<Toy::EnumToyType>(type) );
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1276,7 +1276,7 @@ void MainWindow::onToyTreeItemDeleted()
 void MainWindow::onToyTreeItemAdded()
 {
 	if(m_ToyTreeType != Toy::TOY_INVALID)
-		m_Toys->AddToy(m_ToyTreeType, /*buildRecvWidgets*/true);
+		m_Toys->AddToy( m_ToyTreeType );
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -142,6 +142,7 @@ protected:
 	bool				m_SendOnConnect;
 	size_t				m_EditWidgetIndex;
 	QMenu				*m_pContextMenu;
+	bool				m_Loading;
 	
 	virtual ToyWidget* CreateWidget() = 0;
 	virtual QSize GetDefaultWidgetSize() const {return QSize(80,80);}

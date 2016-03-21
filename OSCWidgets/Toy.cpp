@@ -54,9 +54,9 @@ unsigned int Toy::sm_FlickerRefreshRateMS = 0;
 ////////////////////////////////////////////////////////////////////////////////
 
 Toy::Toy(EnumToyType type, Client *pClient, QWidget *parent, Qt::WindowFlags flags)
-	: m_Type(type)
+	: QWidget(parent, flags)
+	, m_Type(type)
 	, m_pClient(pClient)
-	, QWidget(parent, flags)
 {
 	QPalette pal( palette() );
 	pal.setColor(QPalette::ButtonText, QColor(200,200,200));

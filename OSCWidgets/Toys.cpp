@@ -34,6 +34,7 @@ Toys::Toys(Toy::Client *pClient, QWidget *pParent)
 	, m_FramesEnabled(true)
 	, m_TopMost(false)
 	, m_Opacity(100)
+	, m_Loading(false)
 {
 }
 
@@ -48,7 +49,7 @@ void Toys::Clear()
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Toy* Toys::AddToy(Toy::EnumToyType type, bool buildRecvWidgetsTable)
+Toy* Toys::AddToy(Toy::EnumToyType type)
 {
 	Toy *toy = Toy::Create(type, m_pClient, /*parent*/0, GetWindowFlags());
 	if( toy )
@@ -59,12 +60,15 @@ Toy* Toys::AddToy(Toy::EnumToyType type, bool buildRecvWidgetsTable)
 		connect(toy, SIGNAL(toggleMainWindow()), this, SLOT(onToyToggledMainWindow()));
 		if(m_Opacity != 100)
 			toy->setWindowOpacity(m_Opacity * 0.01);
-		toy->showNormal();
-		UpdateWindowFlags();
 		m_List.push_back(toy);
 
-		if( buildRecvWidgetsTable )
+		if( !m_Loading )
+		{
+			toy->showNormal();
+			UpdateWindowFlags();
 			BuildRecvWidgetsTable();
+			toy->raise();
+		}
 
 		emit changed();
 	}
@@ -239,6 +243,8 @@ bool Toys::Load(EosLog &log, const QString &path, QStringList &lines, int &index
 
 	while(index>=0 && index<lines.size())
 	{
+		m_Loading = true;
+		
 		QStringList items;
 		Utils::GetItemsFromQuotedString(lines[index], items);
 
@@ -248,7 +254,7 @@ bool Toys::Load(EosLog &log, const QString &path, QStringList &lines, int &index
 			int n = items[0].toInt(&ok);
 			if(ok && n>=0 && n<Toy::TOY_COUNT)
 			{
-				Toy *toy = AddToy(static_cast<Toy::EnumToyType>(n), /*buildRecvWidgetsTable*/false);
+				Toy *toy = AddToy( static_cast<Toy::EnumToyType>(n) );
 				if( toy )
 					toy->Load(log, path, lines, index);
 				else
@@ -259,9 +265,10 @@ bool Toys::Load(EosLog &log, const QString &path, QStringList &lines, int &index
 		}
 		else
 			index++;
+		
+		m_Loading = false;
 	}
-
-	UpdateWindowFlags();
+	
 	BuildRecvWidgetsTable();
 
 	return true;

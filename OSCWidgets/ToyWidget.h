@@ -53,6 +53,7 @@ public:
 	virtual bool GetVisible() const {return m_Visible;}
 	virtual void SetVisible(bool b);
 	virtual bool HasVisible() const {return true;}
+	virtual void UpdateVisible();
 	virtual const QString& GetPath() const {return m_Path;}
 	virtual void SetPath(const QString &path);
 	virtual bool HasPath() const {return true;}
@@ -121,7 +122,6 @@ protected:
 	
 	virtual void resizeEvent(QResizeEvent *event);
 	virtual void UpdateMode();
-	virtual void UpdateVisible();
 	virtual void UpdateToolTip();
 };
 

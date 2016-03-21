@@ -149,6 +149,7 @@ ToyGrid::ToyGrid(EnumToyType type, Client *pClient, QWidget *parent, Qt::WindowF
 	, m_SendOnConnect(false)
 	, m_IgnoreEdits(0)
 	, m_pContextMenu(0)
+	, m_Loading(false)
 {
 	m_EditPanel = new EditPanel(this);
 	m_EditPanel->hide();
@@ -249,25 +250,28 @@ void ToyGrid::SetGridSize(const QSize &gridSize)
 				m_List.push_back(widget);
 				ApplyDefaultSettings(widget, m_List.size());
 				widget->SetMode(m_Mode);
-				widget->show();
+				
+				if( !m_Loading )
+					widget->show();
+				
 				connect(widget, SIGNAL(edit(ToyWidget*)), this, SLOT(onWidgetEdited(ToyWidget*)));
 			}
 			else
 				break;
 		}
-		
-		if( widgetSize.isEmpty() )
-			widgetSize = GetDefaultWidgetSize();
 
 		setMinimumSize(m_GridSize.width()*24, m_GridSize.height()*24);
-
-		AutoSize(widgetSize);
 		
 		m_EditWidgetIndex = m_List.size();
 		
-		UpdateLayout();
-		
-		emit recvWidgetsChanged();
+		if( !m_Loading )
+		{
+			if( widgetSize.isEmpty() )
+				widgetSize = GetDefaultWidgetSize();
+			AutoSize(widgetSize);
+			UpdateLayout();
+			emit recvWidgetsChanged();
+		}
 	}
 }
 
@@ -574,9 +578,7 @@ void ToyGrid::AddRecvWidgets(RECV_WIDGETS &recvWidgets) const
 
 bool ToyGrid::Save(EosLog &log, const QString &path, QStringList &lines)
 {
-	QRect r( normalGeometry() );
-	if( r.isEmpty() )
-		r = geometry();
+	QRect r(frameGeometry().topLeft(), size());
 
 	QString imagePath(m_ImagePath);
 	Toy::ResourceAbsolutePathToRelative(&log, path, imagePath);
@@ -611,6 +613,8 @@ bool ToyGrid::Load(EosLog &log, const QString &path, QStringList &lines, int &in
 {
 	if(index>=0 && index<lines.size())
 	{
+		m_Loading = true;
+		
 		QStringList items;
 		Utils::GetItemsFromQuotedString(lines[index++], items);
 
@@ -621,51 +625,64 @@ bool ToyGrid::Load(EosLog &log, const QString &path, QStringList &lines, int &in
 			gridSize.setHeight( items[8].toInt() );
 			SetGridSize(gridSize);
 			setGeometry(items[1].toInt(), items[2].toInt(), items[3].toInt(), items[4].toInt());
-			Qt::WindowStates ws = static_cast<Qt::WindowStates>( items[5].toInt() );
+			
+			if(items.size() > 9)
+				SetText( items[9] );
+			
+			if(items.size() > 10)
+			{
+				QString imagePath( items[10] );
+				Toy::ResourceRelativePathToAbsolute(&log, path, imagePath);
+				SetImagePath(imagePath);
+			}
+			
+			if(items.size() > 11)
+				SetColor( items[11].toUInt(0,16) );
+			
+			if(items.size() > 12)
+				SetSendOnConnect(items[12].toInt() != 0);
+			
+			int numToyWidgets = (gridSize.width() * gridSize.height());
+			for(int i=0; i<numToyWidgets && index<lines.size(); i++)
+			{
+				size_t widgetIndex = static_cast<size_t>(i);
+				if(widgetIndex < m_List.size())
+					m_List[widgetIndex]->Load(log, path, lines, index);
+			}
+			
+//			Qt::WindowStates ws = static_cast<Qt::WindowStates>( items[5].toInt() );
 			bool windowVisible = (items[6].toInt() != 0);
-			if( ws.testFlag(Qt::WindowMinimized) )
-			{
-				if( ws.testFlag(Qt::WindowMaximized) )
-					showMaximized();
-				showMinimized();
-			}
-			else if( ws.testFlag(Qt::WindowMaximized) )
-			{
-				showMaximized();
-				if( !windowVisible )
-					close();
-			}
-			else
+//			if( ws.testFlag(Qt::WindowMinimized) )
+//			{
+//				if( ws.testFlag(Qt::WindowMaximized) )
+//					showMaximized();
+//				showMinimized();
+//				windowVisible = false;
+//			}
+//			else if( ws.testFlag(Qt::WindowMaximized) )
+//			{
+//				showMaximized();
+//				if( !windowVisible )
+//					close();
+//			}
+//			else
 			{
 				ClipToScreen( *this );
-				if( !windowVisible )
+				if( windowVisible )
+				{
+					showNormal();
+					raise();
+				}
+				else
 					close();
 			}
 		}
-
-		if(items.size() > 9)
-			SetText( items[9] );
-
-		if(items.size() > 10)
-		{
-			QString imagePath( items[10] );
-			Toy::ResourceRelativePathToAbsolute(&log, path, imagePath);
-			SetImagePath(imagePath);
-		}
-
-		if(items.size() > 11)
-			SetColor( items[11].toUInt(0,16) );
 		
-		if(items.size() > 12)
-			SetSendOnConnect(items[12].toInt() != 0);
-
-		int numToyWidgets = (gridSize.width() * gridSize.height());
-		for(int i=0; i<numToyWidgets && index<lines.size(); i++)
-		{
-			size_t widgetIndex = static_cast<size_t>(i);
-			if(widgetIndex < m_List.size())
-				m_List[widgetIndex]->Load(log, path, lines, index);
-		}
+		m_Loading = false;
+		
+		UpdateLayout();
+		
+		emit recvWidgetsChanged();
 	}
 
 	return true;

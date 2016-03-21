@@ -49,7 +49,7 @@ public:
 	Toys(Toy::Client *pClient, QWidget *pParent);
 	
 	virtual void Clear();
-	virtual Toy* AddToy(Toy::EnumToyType type, bool buildRecvWidgets);
+	virtual Toy* AddToy(Toy::EnumToyType type);
 	const TOY_LIST& GetList() const {return m_List;}
 	virtual bool GetFramesEnabled() const {return m_FramesEnabled;}
 	virtual void SetFramesEnabled(bool b);
@@ -89,6 +89,7 @@ protected:
 	bool				m_TopMost;
 	int					m_Opacity;
 	Toy::RECV_WIDGETS	m_RecvWidgets;
+	bool				m_Loading;
 	
 	virtual void BuildRecvWidgetsTable();
 	virtual Qt::WindowFlags GetWindowFlags() const;
