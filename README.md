@@ -4,6 +4,10 @@ Customizable OSC widgets for your Mac or Windows Desktop
 # Download
 [Download Now For Mac or Windows](https://github.com/ElectronicTheatreControlsLabs/OSCWidgets/releases/)
 
+[Demo Layouts](https://github.com/ElectronicTheatreControlsLabs/OSCWidgets/tree/master/DemoLayouts/)
+
+# Screenshots
+
 ![screenshot](https://raw.githubusercontent.com/ElectronicTheatreControlsLabs/Downloads/master/Images/OSCWidgets.png)
 
 Desktop Layout
