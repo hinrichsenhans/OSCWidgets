@@ -576,18 +576,15 @@ void ToyMetroGrid::onTick(ToyMetroWidget *metro, int pos)
 		metro &&
 		!metro->GetPath().isEmpty() )
 	{
-		float value = 0;
-		bool hasValue = false;
+		QString value;
+		bool forceStrArg = false;
 
 		if( metro->GetMin().isEmpty() )
 		{
 			if(pos == FadeMetro::TICK_POS_CENTER)
 			{
 				if( !metro->GetMax().isEmpty() )
-				{
-					value = metro->GetMax().toFloat();
-					hasValue = true;
-				}
+					value = metro->GetMax();
 			}
 			else
 				return;
@@ -595,22 +592,30 @@ void ToyMetroGrid::onTick(ToyMetroWidget *metro, int pos)
 		else if( metro->GetMax().isEmpty() )
 		{
 			if(pos == FadeMetro::TICK_POS_CENTER)
-				value = metro->GetMin().toFloat();
+				value = metro->GetMin();
 			else
 				return;
 		}
 		else if(metro->GetMin() == metro->GetMax())
 		{
 			if(pos == FadeMetro::TICK_POS_CENTER)
-				value = value = metro->GetMax().toFloat();
+			{
+				value = metro->GetMax();
+
+				if(!OSCArgument::IsFloatString(metro->GetMin().toUtf8().constData()) || !OSCArgument::IsFloatString(metro->GetMax().toUtf8().constData()))
+					forceStrArg = true;	// if either is non-numeric, send both as strings
+			}
 			else
 				return;
 		}
 		else if(pos==FadeMetro::TICK_POS_LEFT || pos==FadeMetro::TICK_POS_RIGHT)
 		{
 			value = ((pos==FadeMetro::TICK_POS_LEFT)
-				? metro->GetMin().toFloat()
-				: metro->GetMax().toFloat() );
+				? metro->GetMin()
+				: metro->GetMax() );
+
+			if(!OSCArgument::IsFloatString(metro->GetMin().toUtf8().constData()) || !OSCArgument::IsFloatString(metro->GetMax().toUtf8().constData()))
+					forceStrArg = true;	// if either is non-numeric, send both as strings
 		}
 		else
 			return;
@@ -620,8 +625,14 @@ void ToyMetroGrid::onTick(ToyMetroWidget *metro, int pos)
 
 		OSCPacketWriter packetWriter( path.toUtf8().constData() );
 		
-		if( hasValue )
-			packetWriter.AddFloat32(value);
+		if( !value.isEmpty() )
+		{
+			QByteArray ba( value.toUtf8() );
+			if(!forceStrArg && OSCArgument::IsFloatString(ba.constData()))
+				packetWriter.AddFloat32( value.toFloat() );
+			else
+				packetWriter.AddString( ba.constData() );
+		}
 
 		size_t size;
 		char *data = packetWriter.Create(size);
