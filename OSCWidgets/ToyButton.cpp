@@ -27,8 +27,10 @@
 
 ToyButtonWidget::ToyButtonWidget(QWidget *parent)
 	: ToyWidget(parent)
+	, m_Toggle(false)
 {
-	m_HelpText = tr("Min = Button Down\nMax = Button Up\n\nOSC Trigger:\nNo Arguments = Click\nArgument(1) = Press\nArgument(0) = Release");
+	m_HelpText = tr("Min = Button Up\nMax = Button Down\n\nLeave Min or Max blank to send single edge\n\nLeave both blank to send without arguments\n\nSpecify Min2/Max2 for toggle button\n\nOSC Trigger:\nNo Arguments = Click\nArgument(1) = Press\nArgument(0) = Release");
+	m_Min2 = m_Max2 = QString();
 
 	m_Widget = new FadeButton(this);
 	connect(m_Widget, SIGNAL(pressed()), this, SLOT(onPressed()));
@@ -80,6 +82,13 @@ void ToyButtonWidget::SetTextColor(const QColor &textColor)
 void ToyButtonWidget::SetLabel(const QString &label)
 {
 	static_cast<FadeButton*>(m_Widget)->SetLabel(label);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void ToyButtonWidget::SetToggle(bool b)
+{
+	m_Toggle = b;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -137,6 +146,7 @@ void ToyButtonWidget::onPressed()
 void ToyButtonWidget::onReleased()
 {
 	emit released(this);
+	m_Toggle = !m_Toggle;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -165,72 +175,89 @@ bool ToyButtonGrid::SendButtonCommand(ToyButtonWidget *button, bool press)
 		button &&
 		!button->GetPath().isEmpty() )
 	{
-		const QString &minStr = button->GetMin();
-		const QString &maxStr = button->GetMax();
-		
-		int edgeCount = 0;
-		float value = 0;
-		if( minStr.isEmpty() )
+		bool haveMinMax = (!button->GetMin().isEmpty() || !button->GetMax().isEmpty());
+		bool haveMinMax2 = (!button->GetMin2().isEmpty() || !button->GetMax2().isEmpty());
+
+		if( haveMinMax )
 		{
-			if( !maxStr.isEmpty() )
-			{
-				// only have max field, so always send it
-				bool ok = false;
-				value = maxStr.toFloat(&ok);
-				if( ok )
-					edgeCount = 1;
-			}
+			if(haveMinMax2 && button->GetToggle())
+				return SendButtonCommand(button->GetPath(), button->GetMin2(), button->GetMax2(), press);
+			else
+				return SendButtonCommand(button->GetPath(), button->GetMin(), button->GetMax(), press);
 		}
-		else if( maxStr.isEmpty() )
+		else if( haveMinMax2 )
+			return SendButtonCommand(button->GetPath(), button->GetMin2(), button->GetMax2(), press);
+		
+		return SendButtonCommand(button->GetPath(), QString(), QString(), press);
+	}
+	
+	return false;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+bool ToyButtonGrid::SendButtonCommand(const QString &path, const QString &minStr, const QString &maxStr, bool press)
+{
+	bool shouldSend = false;
+	bool forceStrArg = false;
+	QString value;
+
+	if( minStr.isEmpty() )
+	{
+		if( maxStr.isEmpty() )
 		{
-			// only have min field, so always send it
-			bool ok = false;
-			value = minStr.toFloat(&ok);
-			if( ok )
-				edgeCount = 1;
+			// none
+			if( press )
+				shouldSend = true;
 		}
 		else
 		{
-			// have both min & max fields
-			bool minOk = false;
-			float nMin = minStr.toFloat(&minOk);
-			bool maxOk = false;
-			float nMax = maxStr.toFloat(&maxOk);
-			if( minOk )
+			// max only
+			if( press )
 			{
-				if( maxOk )
-				{
-					edgeCount = 2;
-					value = (press ? nMax : nMin);
-				}
-				else
-				{
-					value = nMin;
-					edgeCount = 1;
-				}
+				value = maxStr;
+				shouldSend = true;
 			}
-			else if( maxOk )
-			{
-				value = nMax;
-				edgeCount = 1;
-			}
-		}
-		
-		if(press || edgeCount>1)
-		{
-			QString path( button->GetPath() );
-			bool local = Utils::MakeLocalOSCPath(false, path);
-			OSCPacketWriter packetWriter( path.toUtf8().constData() );
-			if(edgeCount > 0)
-				packetWriter.AddFloat32(value);
-			
-			size_t size;
-			char *data = packetWriter.Create(size);
-			if(data && m_pClient->ToyClient_Send(local,data,size))
-				return true;
 		}
 	}
-	
+	else if( maxStr.isEmpty() )
+	{
+		// min only
+		if( !press )
+		{
+			value = minStr;
+			shouldSend = true;
+		}
+	}
+	else
+	{
+		// both
+		value = (press ? maxStr : minStr);
+		shouldSend = true;
+		if(!OSCArgument::IsFloatString(minStr.toUtf8().constData()) || !OSCArgument::IsFloatString(maxStr.toUtf8().constData()))
+			forceStrArg = true;	// if either is non-numeric, send both as strings
+	}
+
+	if( shouldSend )
+	{
+		QString path(path);
+		bool local = Utils::MakeLocalOSCPath(false, path);
+		OSCPacketWriter packetWriter( path.toUtf8().constData() );
+		if( !value.isEmpty() )
+		{
+			QByteArray ba( value.toUtf8() );
+			if(!forceStrArg && OSCArgument::IsFloatString(ba.constData()))
+				packetWriter.AddFloat32( value.toFloat() );
+			else
+				packetWriter.AddString( ba.constData() );
+		}
+
+		size_t size;
+		char *data = packetWriter.Create(size);
+		if(data && m_pClient->ToyClient_Send(local,data,size))
+			return true;
+	}
+
 	return false;
 }
 
