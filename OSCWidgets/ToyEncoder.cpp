@@ -371,7 +371,7 @@ void ToyEncoderWidget::SetLabel(const QString &label)
 
 void ToyEncoderWidget::Recv(const QString &path, const OSCArgument *args, size_t count)
 {
-	if(path == m_FeedbackPath)
+	if(path == m_TriggerPath)
 	{
 		FadeEncoder *encoder = static_cast<FadeEncoder*>(m_Widget);
 

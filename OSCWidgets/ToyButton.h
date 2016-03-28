@@ -48,8 +48,13 @@ public:
 	virtual void SetLabel(const QString &label);
 	virtual bool HasMinMax2() const {return true;}
     virtual bool HasFeedbackPath() const {return true;}
+	virtual bool HasTriggerPath() const {return true;}
 	virtual bool GetToggle() const {return m_Toggle;}
 	virtual void SetToggle(bool b);
+	virtual bool HasMinOrMax() const {return (!m_Min.isEmpty() || !m_Max.isEmpty());}
+	virtual bool HasMin2OrMax2() const {return (!m_Min2.isEmpty() || !m_Max2.isEmpty());}
+	virtual bool HasToggle() const {return (HasMinOrMax() && HasMin2OrMax2());}
+	virtual bool GetActionFromOSCArguments(const OSCArgument *args, size_t count, bool &toggle, bool &press) const;
 	
 signals:
 	void pressed(ToyButtonWidget*);

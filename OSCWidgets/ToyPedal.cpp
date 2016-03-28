@@ -427,7 +427,7 @@ void ToyPedalWidget::SetLabel(const QString &label)
 
 void ToyPedalWidget::Recv(const QString &path, const OSCArgument *args, size_t count)
 {
-    if(path == m_FeedbackPath)
+    if(path == m_TriggerPath)
 	{
 		FadePedal *pedal = static_cast<FadePedal*>(m_Widget);
 

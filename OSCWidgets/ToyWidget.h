@@ -60,11 +60,14 @@ public:
 	virtual const QString& GetPath2() const {return m_Path2;}
 	virtual void SetPath2(const QString &path);
 	virtual bool HasPath2() const {return false;}
-	virtual const QString& GetRecvPath() const {return m_RecvPath;}
-	virtual void SetRecvPath(const QString &recvPath);
+	virtual const QString& GetLabelPath() const {return m_LabelPath;}
+	virtual void SetLabelPath(const QString &labelPath);
 	virtual const QString& GetFeedbackPath() const {return m_FeedbackPath;}
 	virtual void SetFeedbackPath(const QString &feedbackPath);
 	virtual bool HasFeedbackPath() const {return false;}
+	virtual const QString& GetTriggerPath() const {return m_TriggerPath;}
+	virtual void SetTriggerPath(const QString &triggerPath);
+	virtual bool HasTriggerPath() const {return false;}
 	virtual const QString& GetText() const {return m_Text;}
 	virtual void SetText(const QString &text) {m_Text = text;}
 	virtual const QString& GetImagePath() const {return m_ImagePath;}
@@ -105,8 +108,9 @@ protected:
 	bool		m_Visible;
 	QString		m_Path;
 	QString		m_Path2;
-	QString		m_RecvPath;
+	QString		m_LabelPath;
 	QString		m_FeedbackPath;
+	QString		m_TriggerPath;
 	QString		m_Text;
 	QString		m_ImagePath;
 	QColor		m_Color;

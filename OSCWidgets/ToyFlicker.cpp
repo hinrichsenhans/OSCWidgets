@@ -408,7 +408,7 @@ void ToyFlickerWidget::SetLabel(const QString &label)
 
 void ToyFlickerWidget::Recv(const QString &path, const OSCArgument *args, size_t count)
 {
-	if(path == m_FeedbackPath)
+	if(path == m_TriggerPath)
 	{
 		bool paused = false;
 

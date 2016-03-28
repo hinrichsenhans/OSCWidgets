@@ -90,11 +90,11 @@ void ToyWidget::UpdateVisible()
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void ToyWidget::SetRecvPath(const QString &recvPath)
+void ToyWidget::SetLabelPath(const QString &labelPath)
 {
-	if(m_RecvPath != recvPath)
+	if(m_LabelPath != labelPath)
 	{
-		m_RecvPath = recvPath;
+		m_LabelPath = labelPath;
 		UpdateToolTip();
 	}
 }
@@ -106,6 +106,17 @@ void ToyWidget::SetFeedbackPath(const QString &feedbackPath)
 	if(m_FeedbackPath != feedbackPath)
 	{
 		m_FeedbackPath = feedbackPath;
+		UpdateToolTip();
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void ToyWidget::SetTriggerPath(const QString &triggerPath)
+{
+	if(m_TriggerPath != triggerPath)
+	{
+		m_TriggerPath = triggerPath;
 		UpdateToolTip();
 	}
 }
@@ -163,18 +174,25 @@ void ToyWidget::UpdateToolTip()
 			tip = tr("\nOSC Output 2: %1").arg(m_Path2);
 	}
 
-	if( !m_RecvPath.isEmpty() )
+	if( !m_LabelPath.isEmpty() )
 	{
 		if( !tip.isEmpty() )
 			tip.append("\n");
-		tip.append( tr("OSC Label: %1").arg(m_RecvPath) );
+		tip.append( tr("OSC Label: %1").arg(m_LabelPath) );
 	}
 
 	if( !m_FeedbackPath.isEmpty() )
 	{
 		if( !tip.isEmpty() )
 			tip.append("\n");
-		tip.append( tr("OSC Trigger: %1").arg(m_FeedbackPath) );
+		tip.append( tr("OSC Feedback: %1").arg(m_FeedbackPath) );
+	}
+
+	if( !m_TriggerPath.isEmpty() )
+	{
+		if( !tip.isEmpty() )
+			tip.append("\n");
+		tip.append( tr("OSC Trigger: %1").arg(m_TriggerPath) );
 	}
 
 	m_Widget->setToolTip(tip);
@@ -204,8 +222,9 @@ bool ToyWidget::Save(EosLog &log, const QString &path, QStringList &lines)
 	line.append( QString("%1").arg(static_cast<int>(m_Visible ? 1 : 0)) );
 	line.append( QString(", %1").arg(Utils::QuotedString(m_Path)) );
 	line.append( QString(", %1").arg(Utils::QuotedString(m_Path2)) );
-	line.append( QString(", %1").arg(Utils::QuotedString(m_RecvPath)) );
+	line.append( QString(", %1").arg(Utils::QuotedString(m_LabelPath)) );
 	line.append( QString(", %1").arg(Utils::QuotedString(m_FeedbackPath)) );
+	line.append( QString(", %1").arg(Utils::QuotedString(m_TriggerPath)) );
 	line.append( QString(", %1").arg(Utils::QuotedString(m_Text)) );
 	line.append( QString(", %1").arg(Utils::QuotedString(imagePath)) );
 	line.append( QString(", %1").arg(m_Color.rgba(),0,16) );
@@ -240,10 +259,13 @@ bool ToyWidget::Load(EosLog &log, const QString &path, QStringList &lines, int &
 			SetPath2( items[2] );
 
 		if(items.size() > 3)
-			SetRecvPath( items[3] );
+			SetLabelPath( items[3] );
 
 		if(HasFeedbackPath() && items.size() > 4)
 			SetFeedbackPath( items[4] );
+
+		if(HasTriggerPath() && items.size() > 5)
+			SetTriggerPath( items[5] );
 
 		if(items.size() > 5)
 			SetText( items[5] );

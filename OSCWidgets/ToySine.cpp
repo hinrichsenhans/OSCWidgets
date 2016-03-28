@@ -329,7 +329,7 @@ void ToySineWidget::SetLabel(const QString &label)
 
 void ToySineWidget::Recv(const QString &path, const OSCArgument *args, size_t count)
 {
-	if(path == m_FeedbackPath)
+	if(path == m_TriggerPath)
 	{
 		bool paused = false;
 

@@ -29,7 +29,7 @@ ToyButtonWidget::ToyButtonWidget(QWidget *parent)
 	: ToyWidget(parent)
 	, m_Toggle(false)
 {
-	m_HelpText = tr("Min = Button Up\nMax = Button Down\n\nLeave Min or Max blank to send single edge\n\nLeave both blank to send without arguments\n\nSpecify Min2/Max2 for toggle button\n\nOSC Trigger:\nNo Arguments = Click\nArgument(1) = Press\nArgument(0) = Release");
+	m_HelpText = tr("Min = Button Up\nMax = Button Down\n\nLeave Min or Max blank to send single edge\n\nLeave both blank to send without arguments\n\nToggle:\nSpecify Min2 and/or Max2 for toggle behavior\n\nOSC Trigger:\nNo Arguments = Click\nArgument(1) = Press\nArgument(0) = Release");
 	m_Min2 = m_Max2 = QString();
 
 	m_Widget = new FadeButton(this);
@@ -95,31 +95,48 @@ void ToyButtonWidget::SetToggle(bool b)
 
 void ToyButtonWidget::Recv(const QString &path, const OSCArgument *args, size_t count)
 {
-	if(path == m_FeedbackPath)
-    {
-		FadeButton *button = static_cast<FadeButton*>(m_Widget);
+	FadeButton *button = static_cast<FadeButton*>(m_Widget);
 
-        bool edge = false;
-        
-        if(args && count>0)
-        {
-            bool press = false;
-            if( args[0].GetBool(press) )
-            {
-                edge = true;
-                
-                if( press )
-                    button->Press();
-                else
-                    button->Release();
-            }
-        }
-        
-        if( !edge )
-        {
-            button->Press();
-            button->Release();
-        }
+	bool isFeedback = (path == m_FeedbackPath);
+	bool isTrigger = (!isFeedback && path==m_TriggerPath);
+	if(isFeedback || isTrigger)
+    {
+		bool toggle = false;
+		bool press = false;
+		bool gotAction = GetActionFromOSCArguments(args, count, toggle, press);
+		if( isTrigger )
+		{
+			if( gotAction )
+			{
+				if( press )
+					button->Press();
+				else
+					button->Release();
+			}
+			else
+			{
+				button->Press();
+				button->Release();
+			}
+		}
+		else if( HasToggle() )
+		{
+			if( gotAction )
+			else
+				SetToggle( !GetToggle() );
+		}
+		else if( gotAction )
+		{
+			if( press )
+				button->Press(/*user*/false);
+			else
+				button->Release(/*user*/false);
+		}
+		else
+		{
+			button->Press(/*user*/false);
+			button->Release(/*user*/false);
+		}
     }
     else
     {
@@ -132,6 +149,45 @@ void ToyButtonWidget::Recv(const QString &path, const OSCArgument *args, size_t 
 
         SetLabel( QString::fromUtf8(str.c_str()) );
     }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+bool ToyButtonWidget::GetActionFromOSCArguments(const OSCArgument *args, size_t count, bool &toggle, bool &press) const
+{
+	if(args && count!=0)
+	{
+		float f = 0;
+		if( args[0].GetFloat(f) )
+		{
+			if(!m_Min.isEmpty() && OSC_IS_ABOUTF(f,m_Min.toFloat()))
+			{
+				toggle = false;
+				press = false;
+				return true;
+			}
+			else if(!m_Max.isEmpty() && OSC_IS_ABOUTF(f,m_Max.toFloat()))
+			{
+				toggle = false;
+				press = true;
+				return true;
+			}
+			else if(!m_Min2.isEmpty() && OSC_IS_ABOUTF(f,m_Min2.toFloat()))
+			{
+				toggle = true;
+				press = false;
+				return true;
+			}
+			else if(!m_Max2.isEmpty() && OSC_IS_ABOUTF(f,m_Max2.toFloat()))
+			{
+				toggle = true;
+				press = true;
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -175,17 +231,17 @@ bool ToyButtonGrid::SendButtonCommand(ToyButtonWidget *button, bool press)
 		button &&
 		!button->GetPath().isEmpty() )
 	{
-		bool haveMinMax = (!button->GetMin().isEmpty() || !button->GetMax().isEmpty());
-		bool haveMinMax2 = (!button->GetMin2().isEmpty() || !button->GetMax2().isEmpty());
+		bool hasMinMax = button->HasMinOrMax();
+		bool hasMinMax2 = button->HasMin2OrMax2();
 
-		if( haveMinMax )
+		if( hasMinMax )
 		{
-			if(haveMinMax2 && button->GetToggle())
+			if(hasMinMax2 && button->GetToggle())
 				return SendButtonCommand(button->GetPath(), button->GetMin2(), button->GetMax2(), press);
 			else
 				return SendButtonCommand(button->GetPath(), button->GetMin(), button->GetMax(), press);
 		}
-		else if( haveMinMax2 )
+		else if( hasMinMax2 )
 			return SendButtonCommand(button->GetPath(), button->GetMin2(), button->GetMax2(), press);
 		
 		return SendButtonCommand(button->GetPath(), QString(), QString(), press);

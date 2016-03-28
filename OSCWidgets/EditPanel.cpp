@@ -166,20 +166,28 @@ EditPanel::EditPanel(QWidget *parent)
 	layout->addWidget(m_BPM, row, 1);
 
 	++row;
-	m_RecvPathLabel = new QLabel(tr("OSC Label"), this);
-	layout->addWidget(m_RecvPathLabel, row, 0);
-	m_RecvPath = new QLineEdit(this);
-	SetToolTips(tr("Designate an incoming OSC command as a text label for this widget"), m_RecvPathLabel, m_RecvPath);
-	connect(m_RecvPath, SIGNAL(editingFinished()), this, SLOT(onEditingFinished()));
-	layout->addWidget(m_RecvPath, row, 1, 1, 2);
+	m_LabelPathLabel = new QLabel(tr("OSC Label"), this);
+	layout->addWidget(m_LabelPathLabel, row, 0);
+	m_LabelPath = new QLineEdit(this);
+	SetToolTips(tr("Designate an incoming OSC address as a text label for this widget"), m_LabelPathLabel, m_LabelPath);
+	connect(m_LabelPath, SIGNAL(editingFinished()), this, SLOT(onEditingFinished()));
+	layout->addWidget(m_LabelPath, row, 1, 1, 2);
 
 	++row;
-	m_FeedbackPathLabel = new QLabel(tr("OSC Trigger"), this);
+	m_FeedbackPathLabel = new QLabel(tr("OSC Feedback"), this);
 	layout->addWidget(m_FeedbackPathLabel, row, 0);
 	m_FeedbackPath = new QLineEdit(this);
-	SetToolTips(tr("Trigger this widget via OSC"), m_FeedbackPathLabel, m_FeedbackPath);
+	SetToolTips(tr("Designate an incoming OSC address as a feedback for this widget"), m_FeedbackPathLabel, m_FeedbackPath);
 	connect(m_FeedbackPath, SIGNAL(editingFinished()), this, SLOT(onEditingFinished()));
 	layout->addWidget(m_FeedbackPath, row, 1, 1, 2);
+
+	++row;
+	m_TriggerPathLabel = new QLabel(tr("OSC Trigger"), this);
+	layout->addWidget(m_TriggerPathLabel, row, 0);
+	m_TriggerPath = new QLineEdit(this);
+	SetToolTips(tr("Designate an incoming OSC address as a trigger for this widget"), m_TriggerPathLabel, m_TriggerPath);
+	connect(m_TriggerPath, SIGNAL(editingFinished()), this, SLOT(onEditingFinished()));
+	layout->addWidget(m_TriggerPath, row, 1, 1, 2);
 
 	++row;
 	QLabel *label = new QLabel(tr("Icon"), this);
@@ -423,24 +431,24 @@ void EditPanel::SetPath2Enabled(bool b)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void EditPanel::GetRecvPath(QString &recvPath) const
+void EditPanel::GetLabelPath(QString &labelPath) const
 {
-	recvPath = m_RecvPath->text();
+	labelPath = m_LabelPath->text();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void EditPanel::SetRecvPath(const QString &recvPath)
+void EditPanel::SetLabelPath(const QString &labelPath)
 {
-	m_RecvPath->setText(recvPath);
+	m_LabelPath->setText(labelPath);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void EditPanel::SetRecvPathEnabled(bool b)
+void EditPanel::SetLabelPathEnabled(bool b)
 {
-	m_RecvPathLabel->setEnabled(b);
-	m_RecvPath->setEnabled(b);
+	m_LabelPathLabel->setEnabled(b);
+	m_LabelPath->setEnabled(b);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -463,6 +471,28 @@ void EditPanel::SetFeedbackPathEnabled(bool b)
 {
 	m_FeedbackPathLabel->setEnabled(b);
 	m_FeedbackPath->setEnabled(b);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void EditPanel::GetTriggerPath(QString &triggerPath) const
+{
+	triggerPath = m_TriggerPath->text();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void EditPanel::SetTriggerPath(const QString &triggerPath)
+{
+	m_TriggerPath->setText(triggerPath);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void EditPanel::SetTriggerPathEnabled(bool b)
+{
+	m_TriggerPathLabel->setEnabled(b);
+	m_TriggerPath->setEnabled(b);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -726,8 +756,11 @@ void EditPanel::onColorClicked(bool /*checked*/)
 	QColor color;
 	GetColor(color);
 	color = QColorDialog::getColor(color, this, tr("Color"));
-	SetColor(color);
-	emit edited();
+	if( color.isValid() )
+	{
+		SetColor(color);
+		emit edited();
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -737,8 +770,11 @@ void EditPanel::onTextColorClicked(bool /*checked*/)
 	QColor color;
 	GetTextColor(color);
 	color = QColorDialog::getColor(color, this, tr("Text Color"));
-	SetTextColor(color);
-	emit edited();
+	if( color.isValid() )
+	{
+		SetTextColor(color);
+		emit edited();
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////

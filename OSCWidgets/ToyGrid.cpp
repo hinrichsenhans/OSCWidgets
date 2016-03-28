@@ -447,8 +447,8 @@ void ToyGrid::EditWidget(ToyWidget *widget, bool toggle)
 			m_EditPanel->SetPath2( QString() );
 			m_EditPanel->SetPath2Enabled(false);
 		}
-		m_EditPanel->SetRecvPath( widget->GetRecvPath() );
-		m_EditPanel->SetRecvPathEnabled(true);
+		m_EditPanel->SetLabelPath( widget->GetLabelPath() );
+		m_EditPanel->SetLabelPathEnabled(true);
 		if( widget->HasFeedbackPath() )
 		{
 			m_EditPanel->SetFeedbackPath( widget->GetFeedbackPath() );
@@ -458,6 +458,16 @@ void ToyGrid::EditWidget(ToyWidget *widget, bool toggle)
 		{
 			m_EditPanel->SetFeedbackPath( QString() );
 			m_EditPanel->SetFeedbackPathEnabled(false);
+		}
+		if( widget->HasTriggerPath() )
+		{
+			m_EditPanel->SetTriggerPath( widget->GetTriggerPath() );
+			m_EditPanel->SetTriggerPathEnabled(true);
+		}
+		else
+		{
+			m_EditPanel->SetTriggerPath( QString() );
+			m_EditPanel->SetTriggerPathEnabled(false);
 		}
 		if( widget->HasMinMax() )
 		{
@@ -516,10 +526,12 @@ void ToyGrid::EditWidget(ToyWidget *widget, bool toggle)
 		m_EditPanel->SetPath( QString() );
 		m_EditPanel->SetPathEnabled(false);
 		m_EditPanel->SetPath2Enabled(false);
-		m_EditPanel->SetRecvPath( QString() );
-		m_EditPanel->SetRecvPathEnabled(false);
+		m_EditPanel->SetLabelPath( QString() );
+		m_EditPanel->SetLabelPathEnabled(false);
 		m_EditPanel->SetFeedbackPath( QString() );
-		m_EditPanel->SetFeedbackPathEnabled(false);		
+		m_EditPanel->SetFeedbackPathEnabled(false);
+		m_EditPanel->SetTriggerPath( QString() );
+		m_EditPanel->SetTriggerPathEnabled(false);
 		m_EditPanel->SetMin( QString() );
 		m_EditPanel->SetMax( QString() );
 		m_EditPanel->SetMinMaxEnabled(false);
@@ -567,10 +579,12 @@ void ToyGrid::AddRecvWidgets(RECV_WIDGETS &recvWidgets) const
 	for(WIDGET_LIST::const_iterator i=m_List.begin(); i!=m_List.end(); i++)
 	{
 		ToyWidget *w = *i;
-		if( !w->GetRecvPath().isEmpty() )
-			recvWidgets.insert( RECV_WIDGETS_PAIR(w->GetRecvPath(),w) );
+		if( !w->GetLabelPath().isEmpty() )
+			recvWidgets.insert( RECV_WIDGETS_PAIR(w->GetLabelPath(),w) );
 		if(w->HasFeedbackPath() && !w->GetFeedbackPath().isEmpty())
 			recvWidgets.insert( RECV_WIDGETS_PAIR(w->GetFeedbackPath(),w) );
+		if(w->HasTriggerPath() && !w->GetTriggerPath().isEmpty())
+			recvWidgets.insert( RECV_WIDGETS_PAIR(w->GetTriggerPath(),w) );
 	}
 }
 
@@ -837,10 +851,10 @@ void ToyGrid::onWidgetEdited(ToyWidget *widget)
 		}
 
 		bool recvWidgetsDirty = false;
-		m_EditPanel->GetRecvPath(str);
-		if(widget->GetRecvPath() != str)
+		m_EditPanel->GetLabelPath(str);
+		if(widget->GetLabelPath() != str)
 		{
-			widget->SetRecvPath(str);
+			widget->SetLabelPath(str);
 			recvWidgetsDirty = true;
 		}
 
@@ -850,6 +864,16 @@ void ToyGrid::onWidgetEdited(ToyWidget *widget)
 			if(widget->GetFeedbackPath() != str)
 			{
 				widget->SetFeedbackPath(str);
+				recvWidgetsDirty = true;
+			}
+		}
+
+		if( widget->HasTriggerPath() )
+		{
+			m_EditPanel->GetTriggerPath(str);
+			if(widget->GetTriggerPath() != str)
+			{
+				widget->SetTriggerPath(str);
 				recvWidgetsDirty = true;
 			}
 		}

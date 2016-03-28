@@ -104,6 +104,14 @@ void FadeXY::RecvPos(const QPointF &pos)
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void FadeXY::TriggerPos(const QPointF &pos)
+{
+	if( !m_MouseDown )
+		SetPosPrivate(pos, /*user*/true);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void FadeXY::AutoSizeFont()
 {
 	QFont fnt( font() );
@@ -332,7 +340,7 @@ void FadeXY::onRecvTimeout()
 ToyXYWidget::ToyXYWidget(QWidget *parent)
 	: ToyWidget(parent)
 {
-	m_HelpText = tr("OCS Output = X\nOSC Output 2 = Y\n\nLeave OSC Output 2 blank for single, combined (X,Y) output\n\nMin = Left\nMax = Right\n\nMin2 = Bottom\nMax2 = Top");
+	m_HelpText = tr("OSC Output = X\nOSC Output 2 = Y\n\nLeave OSC Output 2 blank for single, combined (X,Y) output\n\nMin = Left\nMax = Right\n\nMin2 = Bottom\nMax2 = Top");
 
 	m_Min = "-1";
 	m_Max = "1";
@@ -403,8 +411,12 @@ void ToyXYWidget::Recv(const QString &path, const OSCArgument *args, size_t coun
 {
 	if(args && count>0)
 	{
-		if(path == m_FeedbackPath)
+		bool isFeedback = (path == m_FeedbackPath);
+		bool isTrigger = (!isFeedback && path==m_TriggerPath);
+		if(isFeedback || isTrigger)
 		{
+			FadeXY *xy = static_cast<FadeXY*>(m_Widget);
+
 			QPointF pos(0, 0);
 
 			float value = 0;
@@ -422,7 +434,11 @@ void ToyXYWidget::Recv(const QString &path, const OSCArgument *args, size_t coun
 			float rangeY = (maxY - minY);
 			pos.setX(((rangeX==0) ? 0 : (pos.x()-minX)/rangeX));
 			pos.setY(((rangeY==0) ? 0 : (pos.y()-minY)/rangeY));
-			static_cast<FadeXY*>(m_Widget)->RecvPos(pos);
+
+			if( isFeedback )
+				xy->RecvPos(pos);
+			else
+				xy->TriggerPos(pos);
 		}
 		else
 		{

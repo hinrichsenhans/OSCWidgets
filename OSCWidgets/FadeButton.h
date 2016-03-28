@@ -45,8 +45,8 @@ public:
 	virtual void SetLabel(const QString &label);
 	virtual const QString& GetImagePath() const {return m_ImagePath;}
 	virtual void SetImagePath(const QString &imagePath);
-    virtual void Press();
-    virtual void Release();
+    virtual void Press(bool user=true);
+    virtual void Release(bool user=true);
 	virtual void Flash();
 	
 private slots:

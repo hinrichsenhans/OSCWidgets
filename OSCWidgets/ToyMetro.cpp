@@ -394,7 +394,7 @@ void ToyMetroWidget::SetLabel(const QString &label)
 
 void ToyMetroWidget::Recv(const QString &path, const OSCArgument *args, size_t count)
 {
-	if(path == m_FeedbackPath)
+	if(path == m_TriggerPath)
 	{
 		bool paused = false;
 

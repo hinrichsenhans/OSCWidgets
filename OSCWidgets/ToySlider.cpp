@@ -104,6 +104,14 @@ void FadeSlider::RecvPercent(float percent)
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void FadeSlider::TriggerPercent(float percent)
+{
+	if( !m_MouseDown )
+		SetPercentPrivate(percent, /*user*/true);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void FadeSlider::AutoSizeFont()
 {
 	QFont fnt( font() );
@@ -388,7 +396,9 @@ void ToySliderWidget::Recv(const QString &path, const OSCArgument *args, size_t 
 {
 	if(args && count>0)
 	{
-		if(path == m_FeedbackPath)
+		bool isFeedback = (path == m_FeedbackPath);
+		bool isTrigger = (!isFeedback && path==m_TriggerPath);
+		if(isFeedback || isTrigger)
 		{
 			FadeSlider *slider = static_cast<FadeSlider*>(m_Widget);
 
@@ -400,7 +410,15 @@ void ToySliderWidget::Recv(const QString &path, const OSCArgument *args, size_t 
 			float maxValue = m_Max.toFloat();
 			float range = (maxValue - minValue);
 			value = ((range==0) ? 0 : (value-minValue)/range);
-			slider->RecvPercent( qBound(0.0f,value,1.0f) );
+			if(value < 0)
+				value = 0;
+			else if(value > 1.0f)
+				value = 1.0f;
+
+			if( isFeedback )
+				slider->RecvPercent(value);
+			else
+				slider->TriggerPercent(value);
 		}
 		else
 		{

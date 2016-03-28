@@ -158,24 +158,32 @@ void FadeButton::AutoSizeFont()
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void FadeButton::Press()
+void FadeButton::Press(bool user/* =true */)
 {
 	if( !isDown() )
 	{
 		setDown(true);
-		emit pressed();
+		if( user )
+			emit pressed();
+		else
+			onPressed();
 	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void FadeButton::Release()
+void FadeButton::Release(bool user/* =true */)
 {
 	if( isDown() )
 	{
 		setDown(false);
-		emit released();
-		emit clicked();
+		if( user )
+		{
+			emit released();
+			emit clicked();
+		}
+		else
+			onReleased();
 	}
 }
 
