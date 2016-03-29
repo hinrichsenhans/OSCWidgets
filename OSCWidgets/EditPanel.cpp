@@ -103,7 +103,7 @@ ButtonRow::ButtonRow(QWidget *parent)
 
 QPushButton* ButtonRow::AddButton()
 {
-	AddButton( QString() );
+	return AddButton( QString() );
 }
 
 ////////////////////////////////////////////////////////////////////////////////
