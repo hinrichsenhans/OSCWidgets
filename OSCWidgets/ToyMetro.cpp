@@ -220,11 +220,12 @@ void FadeMetro::paintEvent(QPaintEvent* /*event*/)
 	clip.addRoundedRect(m_MetroRect, ROUNDED, ROUNDED);
 	painter.setClipPath(clip);
 
-	if( !m_Image.isNull() )
+	const QPixmap &pixmap = m_Images[m_ImageIndex].pixmap;
+	if( !pixmap.isNull() )
 	{
-		painter.drawPixmap(	m_MetroRect.x() + qRound((m_MetroRect.width()-m_Image.width())*0.5),
-							m_MetroRect.y() + qRound((m_MetroRect.height()-m_Image.height())*0.5),
-							m_Image );
+		painter.drawPixmap(	m_MetroRect.x() + qRound((m_MetroRect.width()-pixmap.width())*0.5),
+							m_MetroRect.y() + qRound((m_MetroRect.height()-pixmap.height())*0.5),
+							pixmap );
 	}
 
 	painter.setClipping(false);
@@ -351,7 +352,7 @@ void ToyMetroWidget::SetText(const QString &text)
 void ToyMetroWidget::SetImagePath(const QString &imagePath)
 {
 	ToyWidget::SetImagePath(imagePath);
-	static_cast<FadeMetro*>(m_Widget)->SetImagePath(m_ImagePath);
+	static_cast<FadeMetro*>(m_Widget)->SetImagePath(0, m_ImagePath);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

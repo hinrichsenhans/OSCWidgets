@@ -228,11 +228,12 @@ void FadeSlider::paintEvent(QPaintEvent* /*event*/)
 		clip.addRoundedRect(r, ROUNDED, ROUNDED);
 		painter.setClipPath(clip);
 
-		if( !m_Image.isNull() )
+		const QPixmap &pixmap = m_Images[m_ImageIndex].pixmap;
+		if( !pixmap.isNull() )
 		{
-			painter.drawPixmap(	r.x() + qRound((r.width()-m_Image.width())*0.5),
-								r.y() + qRound((r.height()-m_Image.height())*0.5),
-								m_Image );
+			painter.drawPixmap(	r.x() + qRound((r.width()-pixmap.width())*0.5),
+								r.y() + qRound((r.height()-pixmap.height())*0.5),
+								pixmap );
 		}
 
 		painter.setClipping(false);
@@ -243,7 +244,7 @@ void FadeSlider::paintEvent(QPaintEvent* /*event*/)
 
 		painter.setClipping(true);
 
-		if( !m_Image.isNull() )
+		if( !pixmap.isNull() )
 			painter.setOpacity(0.8);
 
 		int y = PercentToPos(m_Percent);
@@ -360,7 +361,7 @@ void ToySliderWidget::SetText(const QString &text)
 void ToySliderWidget::SetImagePath(const QString &imagePath)
 {
 	ToyWidget::SetImagePath(imagePath);
-	static_cast<FadeSlider*>(m_Widget)->SetImagePath(m_ImagePath);
+	static_cast<FadeSlider*>(m_Widget)->SetImagePath(0, m_ImagePath);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

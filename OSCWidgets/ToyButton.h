@@ -42,13 +42,19 @@ public:
 	
 	virtual void SetText(const QString &text);
 	virtual void SetImagePath(const QString &imagePath);
+	virtual void SetImagePath2(const QString &imagePath2);
+	virtual bool HasImagePath2() const {return true;}
 	virtual void SetColor(const QColor &color);
+	virtual void SetColor2(const QColor &color2);
 	virtual void SetTextColor(const QColor &textColor);
+	virtual void SetTextColor2(const QColor &textColor2);
 	virtual void Recv(const QString &path, const OSCArgument *args, size_t count);
 	virtual void SetLabel(const QString &label);
 	virtual bool HasMinMax2() const {return true;}
     virtual bool HasFeedbackPath() const {return true;}
 	virtual bool HasTriggerPath() const {return true;}
+	virtual bool HasColor2() const {return true;}
+	virtual bool HasTextColor2() const {return true;}
 	virtual bool GetToggle() const {return m_Toggle;}
 	virtual void SetToggle(bool b);
 	virtual bool HasMinOrMax() const {return (!m_Min.isEmpty() || !m_Max.isEmpty());}
@@ -66,6 +72,8 @@ private slots:
 
 protected:
 	bool	m_Toggle;
+	
+	virtual void UpdateToggleState();
 };
 
 ////////////////////////////////////////////////////////////////////////////////

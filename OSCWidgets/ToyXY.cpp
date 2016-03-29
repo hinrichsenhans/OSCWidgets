@@ -255,11 +255,12 @@ void FadeXY::paintEvent(QPaintEvent* /*event*/)
 		clip.addRoundedRect(r, ROUNDED, ROUNDED);
 		painter.setClipPath(clip);
 
-		if( !m_Image.isNull() )
+		const QPixmap &pixmap = m_Images[m_ImageIndex].pixmap;
+		if( !pixmap.isNull() )
 		{
-			painter.drawPixmap(	r.x() + qRound((r.width()-m_Image.width())*0.5),
-								r.y() + qRound((r.height()-m_Image.height())*0.5),
-								m_Image );
+			painter.drawPixmap(	r.x() + qRound((r.width()-pixmap.width())*0.5),
+								r.y() + qRound((r.height()-pixmap.height())*0.5),
+								pixmap );
 		}
 
 		painter.setClipping(false);
@@ -375,7 +376,7 @@ void ToyXYWidget::SetText(const QString &text)
 void ToyXYWidget::SetImagePath(const QString &imagePath)
 {
 	ToyWidget::SetImagePath(imagePath);
-	static_cast<FadeXY*>(m_Widget)->SetImagePath(m_ImagePath);
+	static_cast<FadeXY*>(m_Widget)->SetImagePath(0, m_ImagePath);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

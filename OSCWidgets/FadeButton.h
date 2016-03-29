@@ -38,13 +38,19 @@ class FadeButton
 	Q_OBJECT
 	
 public:
+	enum EnumConstants
+	{
+		NUM_IMAGES	= 2
+	};
+	
 	FadeButton(QWidget *parent);
 	virtual ~FadeButton();
 
 	virtual const QString& GetLabel() const {return m_Label;}
 	virtual void SetLabel(const QString &label);
-	virtual const QString& GetImagePath() const {return m_ImagePath;}
-	virtual void SetImagePath(const QString &imagePath);
+	virtual const QString& GetImagePath(size_t index) const;
+	virtual void SetImagePath(size_t index, const QString &imagePath);
+	virtual void SetImageIndex(size_t index);
     virtual void Press(bool user=true);
     virtual void Release(bool user=true);
 	virtual void Flash();
@@ -56,6 +62,12 @@ private slots:
 	void onHoverTimeout();
 	
 protected:
+	struct sImage
+	{
+		QString path;
+		QPixmap	pixmap;
+	};
+	
 	float		m_Click;
 	QTimer		*m_ClickTimer;
 	EosTimer	m_ClickTimestamp;
@@ -63,8 +75,8 @@ protected:
 	QTimer		*m_HoverTimer;
 	EosTimer	m_HoverTimestamp;
 	QString		m_Label;
-	QString		m_ImagePath;
-	QPixmap		m_Image;
+	sImage		m_Images[NUM_IMAGES];
+	size_t		m_ImageIndex;
 	
 	virtual void StartClick();
 	virtual void StopClick();
@@ -73,7 +85,7 @@ protected:
 	virtual void StopHover();
 	virtual void SetHover(float percent);
 	virtual void AutoSizeFont();
-	virtual void UpdateImage();
+	virtual void UpdateImage(size_t index);
 	virtual void resizeEvent(QResizeEvent *event);
 	virtual void paintEvent(QPaintEvent *event);
 	virtual bool event(QEvent *event);

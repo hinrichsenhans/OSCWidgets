@@ -91,6 +91,50 @@ void EditButton::onTick()
 
 ////////////////////////////////////////////////////////////////////////////////
 
+ButtonRow::ButtonRow(QWidget *parent)
+	: QWidget(parent)
+{
+	QHBoxLayout *buttonLayout = new QHBoxLayout(this);
+	buttonLayout->setContentsMargins(0, 0, 0, 0);
+	buttonLayout->setSpacing(4);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+QPushButton* ButtonRow::AddButton()
+{
+	AddButton( QString() );
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+QPushButton* ButtonRow::AddButton(const QString &text)
+{
+	QPushButton *button = new QPushButton(text, this);
+	AddWidget(button);
+	return button;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+FadeButton* ButtonRow::AddFadeButton()
+{
+	FadeButton *fadeButton = new FadeButton(this);
+	AddWidget(fadeButton);
+	return fadeButton;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void ButtonRow::AddWidget(QWidget *w)
+{
+	QLayout *buttonLayout = layout();
+	if( buttonLayout )
+		buttonLayout->addWidget(w);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 EditPanel::EditPanel(QWidget *parent)
 	: QWidget(parent, Qt::Window)
 {
@@ -192,29 +236,42 @@ EditPanel::EditPanel(QWidget *parent)
 	++row;
 	QLabel *label = new QLabel(tr("Icon"), this);
 	layout->addWidget(label, row, 0);
-	m_ImagePathButton = new FadeButton(this);
+	ButtonRow *buttonRow = new ButtonRow(this);
+	m_ImagePathButton = buttonRow->AddFadeButton();
 	SetToolTips(tr("Image files are referenced relative to the *.oscwidgets.txt file"), label, m_ImagePathButton);
 	m_ImagePathButton->setFixedSize(40, 40);
 	connect(m_ImagePathButton, SIGNAL(clicked(bool)), this, SLOT(onImagePathButtonClicked(bool)));
-	layout->addWidget(m_ImagePathButton, row, 1, 1, 2);
+	m_ImagePath2Button = buttonRow->AddFadeButton();
+	m_ImagePath2Button->setToolTip( tr("Used for Toggled button") );
+	m_ImagePath2Button->setFixedSize(40, 40);
+	connect(m_ImagePath2Button, SIGNAL(clicked(bool)), this, SLOT(onImagePath2ButtonClicked(bool)));
+	layout->addWidget(buttonRow, row, 1, 1, 2, Qt::AlignLeft);
 
 	++row;
 	m_HiddenLabel = new QLabel(tr("Hidden"), this);
 	layout->addWidget(m_HiddenLabel, row, 0);
 	m_Hidden = new QCheckBox(this);
-	SetToolTips(tr("Hide this widget"), label, m_ImagePathButton);
+	SetToolTips(tr("Hide this widget"), label, m_Hidden);
 	connect(m_Hidden, SIGNAL(stateChanged(int)), this, SLOT(onHiddenStateChanged(int)));
 	layout->addWidget(m_Hidden, row, 1, 1, 2);
 	
 	++row;
-	m_Color = new QPushButton(tr("Color..."), this);
+	buttonRow = new ButtonRow(this);
+	m_Color = buttonRow->AddButton( tr("Color...") );
 	connect(m_Color, SIGNAL(clicked(bool)), this, SLOT(onColorClicked(bool)));
-	layout->addWidget(m_Color, row, 0, 1, 3);
+	m_Color2 = buttonRow->AddButton( tr("Color 2...") );
+	m_Color2->setToolTip( tr("Used for Toggled button") );
+	connect(m_Color2, SIGNAL(clicked(bool)), this, SLOT(onColor2Clicked(bool)));
+	layout->addWidget(buttonRow, row, 0, 1, 3);
 	
 	++row;
-	m_TextColor = new QPushButton(tr("Text Color..."), this);
+	buttonRow = new ButtonRow(this);
+	m_TextColor = buttonRow->AddButton( tr("Text Color...") );
 	connect(m_TextColor, SIGNAL(clicked(bool)), this, SLOT(onTextColorClicked(bool)));
-	layout->addWidget(m_TextColor, row, 0, 1, 3);
+	m_TextColor2 = buttonRow->AddButton( tr("Text Color 2...") );
+	m_TextColor2->setToolTip( tr("Used for Toggled button") );
+	connect(m_TextColor2, SIGNAL(clicked(bool)), this, SLOT(onTextColor2Clicked(bool)));
+	layout->addWidget(buttonRow, row, 0, 1, 3);
 
 	++row;
 	QPushButton *button = new QPushButton(tr("Done"), this);
@@ -331,8 +388,33 @@ void EditPanel::SetImagePath(const QString &imagePath)
 	if(m_ImagePath != imagePath)
 	{
 		m_ImagePath = imagePath;
-		m_ImagePathButton->SetImagePath(m_ImagePath);
+		m_ImagePathButton->SetImagePath(0, m_ImagePath);
 	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void EditPanel::GetImagePath2(QString &imagePath2) const
+{
+	imagePath2 = m_ImagePath2;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void EditPanel::SetImagePath2(const QString &imagePath2)
+{
+	if(m_ImagePath2 != imagePath2)
+	{
+		m_ImagePath2 = imagePath2;
+		m_ImagePath2Button->SetImagePath(0, m_ImagePath2);
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void EditPanel::SetImagePath2Enabled(bool b)
+{
+	m_ImagePath2Button->setVisible(b);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -517,6 +599,33 @@ void EditPanel::SetColor(const QColor &color)
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void EditPanel::GetColor2(QColor &color2) const
+{
+	color2 = m_Color2->palette().color(QPalette::Button);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void EditPanel::SetColor2(const QColor &color2)
+{
+	QPalette pal( m_Color2->palette() );
+	pal.setColor(QPalette::Button, color2);
+	m_Color2->setPalette(pal);
+	
+	pal = m_TextColor2->palette();
+	pal.setColor(QPalette::Button, color2);
+	m_TextColor2->setPalette(pal);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void EditPanel::SetColor2Enabled(bool b)
+{
+	m_Color2->setVisible(b);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void EditPanel::GetTextColor(QColor &textColor) const
 {
 	textColor = m_TextColor->palette().color(QPalette::ButtonText);
@@ -540,6 +649,33 @@ void EditPanel::SetTextColor(const QColor &textColor)
 void EditPanel::SetTextColorEnabled(bool b)
 {
 	m_TextColor->setEnabled(b);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void EditPanel::GetTextColor2(QColor &textColor2) const
+{
+	textColor2 = m_TextColor2->palette().color(QPalette::ButtonText);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void EditPanel::SetTextColor2(const QColor &textColor2)
+{
+	QPalette pal( m_TextColor2->palette() );
+	pal.setColor(QPalette::ButtonText, textColor2);
+	m_TextColor2->setPalette(pal);
+	
+	pal = m_Color2->palette();
+	pal.setColor(QPalette::ButtonText, textColor2);
+	m_Color2->setPalette(pal);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void EditPanel::SetTextColor2Enabled(bool b)
+{
+	m_TextColor2->setVisible(b);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -717,10 +853,10 @@ void EditPanel::onLocalStateChanged(int /*state*/)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void EditPanel::onImagePathButtonClicked(bool /*checked*/)
+bool EditPanel::GetImageFile(QString &path)
 {
 	QList<QByteArray> formats = QImageReader::supportedImageFormats();
-
+	
 	QString filter;
 	for(QList<QByteArray>::const_iterator i=formats.begin(); i!=formats.end(); i++)
 	{
@@ -732,21 +868,83 @@ void EditPanel::onImagePathButtonClicked(bool /*checked*/)
 			filter.append( QString("*.%1").arg(ext) );
 		}
 	}
-
+	
 	if( !filter.isEmpty() )
 	{
 		filter.prepend( tr("Image Files (") );
 		filter.append(")");
 	}
+	
+	path = QFileDialog::getOpenFileName(	this,
+											tr("Select Icon"),
+											QDesktopServices::storageLocation(QDesktopServices::PicturesLocation),
+											filter );
+	
+	return true;
+}
 
-	QString imagePath = QFileDialog::getOpenFileName(this,
-		tr("Select Icon"),
-		QDesktopServices::storageLocation(QDesktopServices::PicturesLocation),
-		filter);
+////////////////////////////////////////////////////////////////////////////////
 
-	SetImagePath(imagePath);
+void EditPanel::onImagePathButtonClicked(bool /*checked*/)
+{
+	QString imagePath;
+	bool shouldBrowse = true;
+	
+	if( !m_ImagePath.isEmpty() )
+	{
+		QMenu menu(this);
+		QAction *browseAction = menu.addAction(QIcon(":/assets/images/MenuIconOpen.png"), tr("Browse..."));
+		QAction *clearAction = menu.addAction(QIcon(":/assets/images/MenuIconTrash.png"), tr("Clear"));
+		QAction *result = menu.exec( QCursor::pos() );
+		if(result == clearAction)
+			shouldBrowse = false;
+		else if(result != browseAction)
+			return;	// canceled
+	}
+	
+	if( shouldBrowse )
+	{
+		if( !GetImageFile(imagePath) )
+			return;	// canceled
+	}
+	
+	if(m_ImagePath != imagePath)
+	{
+		SetImagePath(imagePath);
+		emit edited();
+	}
+}
 
-	emit edited();
+////////////////////////////////////////////////////////////////////////////////
+
+void EditPanel::onImagePath2ButtonClicked(bool /*checked*/)
+{
+	QString imagePath2;
+	bool shouldBrowse = true;
+	
+	if( !m_ImagePath2.isEmpty() )
+	{
+		QMenu menu(this);
+		QAction *browseAction = menu.addAction(QIcon(":/assets/images/MenuIconOpen.png"), tr("Browse..."));
+		QAction *clearAction = menu.addAction(QIcon(":/assets/images/MenuIconTrash.png"), tr("Clear"));
+		QAction *result = menu.exec( QCursor::pos() );
+		if(result == clearAction)
+			shouldBrowse = false;
+		else if(result != browseAction)
+			return;	// canceled
+	}
+	
+	if( shouldBrowse )
+	{
+		if( !GetImageFile(imagePath2) )
+			return;	// canceled
+	}
+	
+	if(m_ImagePath2 != imagePath2)
+	{
+		SetImagePath2(imagePath2);
+		emit edited();
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -765,14 +963,42 @@ void EditPanel::onColorClicked(bool /*checked*/)
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void EditPanel::onColor2Clicked(bool /*checked*/)
+{
+	QColor color2;
+	GetColor2(color2);
+	color2 = QColorDialog::getColor(color2, this, tr("Color 2"));
+	if( color2.isValid() )
+	{
+		SetColor2(color2);
+		emit edited();
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void EditPanel::onTextColorClicked(bool /*checked*/)
 {
-	QColor color;
-	GetTextColor(color);
-	color = QColorDialog::getColor(color, this, tr("Text Color"));
-	if( color.isValid() )
+	QColor textColor;
+	GetTextColor(textColor);
+	textColor = QColorDialog::getColor(textColor, this, tr("Text Color"));
+	if( textColor.isValid() )
 	{
-		SetTextColor(color);
+		SetTextColor(textColor);
+		emit edited();
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void EditPanel::onTextColor2Clicked(bool /*checked*/)
+{
+	QColor textColor2;
+	GetTextColor2(textColor2);
+	textColor2 = QColorDialog::getColor(textColor2, this, tr("Text Color 2"));
+	if( textColor2.isValid() )
+	{
+		SetTextColor2(textColor2);
 		emit edited();
 	}
 }

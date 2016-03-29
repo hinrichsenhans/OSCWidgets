@@ -72,10 +72,19 @@ public:
 	virtual void SetText(const QString &text) {m_Text = text;}
 	virtual const QString& GetImagePath() const {return m_ImagePath;}
 	virtual void SetImagePath(const QString &imagePath) {m_ImagePath = imagePath;}
+	virtual const QString& GetImagePath2() const {return m_ImagePath2;}
+	virtual void SetImagePath2(const QString &imagePath2) {m_ImagePath2 = imagePath2;}
+	virtual bool HasImagePath2() const {return false;}
 	virtual const QColor& GetColor() const {return m_Color;}
 	virtual void SetColor(const QColor &color) {m_Color = color;}
+	virtual const QColor& GetColor2() const {return m_Color2;}
+	virtual void SetColor2(const QColor &color2) {m_Color2 = color2;}
+	virtual bool HasColor2() const {return false;}
 	virtual const QColor& GetTextColor() const {return m_TextColor;}
 	virtual void SetTextColor(const QColor &textColor) {m_TextColor = textColor;}
+	virtual const QColor& GetTextColor2() const {return m_TextColor2;}
+	virtual void SetTextColor2(const QColor &textColor2) {m_TextColor2 = textColor2;}
+	virtual bool HasTextColor2() const {return false;}
 	virtual bool GetSelected() const;
 	virtual void SetSelected(bool selected);
 	virtual const QString& GetMin() const {return m_Min;}
@@ -113,8 +122,11 @@ protected:
 	QString		m_TriggerPath;
 	QString		m_Text;
 	QString		m_ImagePath;
+	QString		m_ImagePath2;
 	QColor		m_Color;
+	QColor		m_Color2;
 	QColor		m_TextColor;
+	QColor		m_TextColor2;
 	QWidget		*m_Widget;
 	QString		m_Min;
 	QString		m_Max;

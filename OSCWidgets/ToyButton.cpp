@@ -39,6 +39,10 @@ ToyButtonWidget::ToyButtonWidget(QWidget *parent)
 	QPalette pal( m_Widget->palette() );
 	m_Color = pal.color(QPalette::Button);
 	m_TextColor = pal.color(QPalette::ButtonText);
+	m_Color2 = m_TextColor;
+	m_TextColor2 = m_Color;
+	
+	UpdateToggleState();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -54,7 +58,15 @@ void ToyButtonWidget::SetText(const QString &text)
 void ToyButtonWidget::SetImagePath(const QString &imagePath)
 {
 	ToyWidget::SetImagePath(imagePath);
-	static_cast<FadeButton*>(m_Widget)->SetImagePath(m_ImagePath);
+	static_cast<FadeButton*>(m_Widget)->SetImagePath(0, m_ImagePath);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void ToyButtonWidget::SetImagePath2(const QString &imagePath2)
+{
+	ToyWidget::SetImagePath2(imagePath2);
+	static_cast<FadeButton*>(m_Widget)->SetImagePath(1, m_ImagePath2);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -62,9 +74,15 @@ void ToyButtonWidget::SetImagePath(const QString &imagePath)
 void ToyButtonWidget::SetColor(const QColor &color)
 {
 	ToyWidget::SetColor(color);
-	QPalette pal( m_Widget->palette() );
-	pal.setColor(QPalette::Button, m_Color);
-	m_Widget->setPalette(pal);
+	UpdateToggleState();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void ToyButtonWidget::SetColor2(const QColor &color2)
+{
+	ToyWidget::SetColor2(color2);
+	UpdateToggleState();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -72,9 +90,15 @@ void ToyButtonWidget::SetColor(const QColor &color)
 void ToyButtonWidget::SetTextColor(const QColor &textColor)
 {
 	ToyWidget::SetTextColor(textColor);
-	QPalette pal( m_Widget->palette() );
-	pal.setColor(QPalette::ButtonText, m_TextColor);
-	m_Widget->setPalette(pal);
+	UpdateToggleState();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void ToyButtonWidget::SetTextColor2(const QColor &textColor2)
+{
+	ToyWidget::SetTextColor2(textColor2);
+	UpdateToggleState();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -88,7 +112,27 @@ void ToyButtonWidget::SetLabel(const QString &label)
 
 void ToyButtonWidget::SetToggle(bool b)
 {
-	m_Toggle = b;
+	if(m_Toggle != b)
+	{
+		m_Toggle = b;
+		UpdateToggleState();
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void ToyButtonWidget::UpdateToggleState()
+{
+	FadeButton *button = static_cast<FadeButton*>(m_Widget);
+	
+	bool toggled = (HasToggle() && m_Toggle);
+	
+	QPalette pal( m_Widget->palette() );
+	pal.setColor(QPalette::Button, toggled ? m_Color2 : m_Color);
+	pal.setColor(QPalette::ButtonText, toggled ? m_TextColor2 : m_TextColor);
+	button->setPalette(pal);
+	
+	button->SetImageIndex(toggled ? 1 : 0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -122,6 +166,7 @@ void ToyButtonWidget::Recv(const QString &path, const OSCArgument *args, size_t 
 		else if( HasToggle() )
 		{
 			if( gotAction )
+				SetToggle(toggle);
 			else
 				SetToggle( !GetToggle() );
 		}
@@ -202,7 +247,9 @@ void ToyButtonWidget::onPressed()
 void ToyButtonWidget::onReleased()
 {
 	emit released(this);
-	m_Toggle = !m_Toggle;
+	
+	if( HasToggle() )
+		SetToggle( !m_Toggle );
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -296,9 +343,9 @@ bool ToyButtonGrid::SendButtonCommand(const QString &path, const QString &minStr
 
 	if( shouldSend )
 	{
-		QString path(path);
-		bool local = Utils::MakeLocalOSCPath(false, path);
-		OSCPacketWriter packetWriter( path.toUtf8().constData() );
+		QString oscPath(path);
+		bool local = Utils::MakeLocalOSCPath(false, oscPath);
+		OSCPacketWriter packetWriter( oscPath.toUtf8().constData() );
 		if( !value.isEmpty() )
 		{
 			QByteArray ba( value.toUtf8() );

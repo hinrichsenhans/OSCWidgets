@@ -427,6 +427,16 @@ void ToyGrid::EditWidget(ToyWidget *widget, bool toggle)
 		m_EditPanel->SetGridEnabled(false);
 		m_EditPanel->SetText( widget->GetText() );
 		m_EditPanel->SetImagePath( widget->GetImagePath() );
+		if( widget->HasImagePath2() )
+		{
+			m_EditPanel->SetImagePath2( widget->GetImagePath2() );
+			m_EditPanel->SetImagePath2Enabled(true);
+		}
+		else
+		{
+			m_EditPanel->SetImagePath2( QString() );
+			m_EditPanel->SetImagePath2Enabled(false);
+		}
 		if( widget->HasPath() )
 		{
 			m_EditPanel->SetPath( widget->GetPath() );
@@ -514,8 +524,22 @@ void ToyGrid::EditWidget(ToyWidget *widget, bool toggle)
 			m_EditPanel->SetHiddenEnabled(false);
 		}
 		m_EditPanel->SetColor( widget->GetColor() );
+		if( widget->HasColor2() )
+		{
+			m_EditPanel->SetColor2( widget->GetColor2() );
+			m_EditPanel->SetColor2Enabled(true);
+		}
+		else
+			m_EditPanel->SetColor2Enabled(false);
 		m_EditPanel->SetTextColor( widget->GetTextColor() );
 		m_EditPanel->SetTextColorEnabled(true);
+		if( widget->HasTextColor2() )
+		{
+			m_EditPanel->SetTextColor2( widget->GetTextColor2() );
+			m_EditPanel->SetTextColor2Enabled(true);
+		}
+		else
+			m_EditPanel->SetTextColor2Enabled(false);
 		m_EditPanel->SetHelpText( widget->GetHelpText() );
 	}
 	else
@@ -523,6 +547,8 @@ void ToyGrid::EditWidget(ToyWidget *widget, bool toggle)
 		m_EditPanel->SetGridEnabled(true);
 		m_EditPanel->SetText(m_Text);
 		m_EditPanel->SetImagePath(m_ImagePath);
+		m_EditPanel->SetImagePath2( QString() );
+		m_EditPanel->SetImagePath2Enabled(false);
 		m_EditPanel->SetPath( QString() );
 		m_EditPanel->SetPathEnabled(false);
 		m_EditPanel->SetPath2Enabled(false);
@@ -541,8 +567,10 @@ void ToyGrid::EditWidget(ToyWidget *widget, bool toggle)
 		m_EditPanel->SetBPM( QString() );
 		m_EditPanel->SetBPMEnabled(false);
 		m_EditPanel->SetColor(m_Color);
-		m_EditPanel->SetTextColor( palette().color(QPalette::ButtonText) );
+		m_EditPanel->SetColor2Enabled(false);
+		m_EditPanel->SetTextColor( palette().color(QPalette::Disabled,QPalette::ButtonText) );
 		m_EditPanel->SetTextColorEnabled(false);
+		m_EditPanel->SetTextColor2Enabled(false);
 		m_EditPanel->SetHidden(false);
 		m_EditPanel->SetHiddenEnabled(false);
 		m_EditPanel->SetHelpText( QString() );
@@ -838,6 +866,12 @@ void ToyGrid::onWidgetEdited(ToyWidget *widget)
 		m_EditPanel->GetImagePath(str);
 		widget->SetImagePath(str);
 		
+		if( widget->HasImagePath2() )
+		{
+			m_EditPanel->GetImagePath2(str);
+			widget->SetImagePath2(str);
+		}
+		
 		if( widget->HasPath() )
 		{
 			m_EditPanel->GetPath(str);
@@ -906,8 +940,20 @@ void ToyGrid::onWidgetEdited(ToyWidget *widget)
 		m_EditPanel->GetColor(color);
 		widget->SetColor(color);
 		
+		if( widget->HasColor2() )
+		{
+			m_EditPanel->GetColor2(color);
+			widget->SetColor2(color);
+		}
+		
 		m_EditPanel->GetTextColor(color);
 		widget->SetTextColor(color);
+		
+		if( widget->HasTextColor2() )
+		{
+			m_EditPanel->GetTextColor2(color);
+			widget->SetTextColor2(color);
+		}
 
 		if( recvWidgetsDirty )
 			emit recvWidgetsChanged();

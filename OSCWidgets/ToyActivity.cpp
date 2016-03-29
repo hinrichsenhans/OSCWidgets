@@ -240,7 +240,8 @@ void FadeActivity::paintEvent(QPaintEvent* /*event*/)
 
 	painter.setOpacity( GetFadeOpacity() );
 
-	if( m_Image.isNull() )
+	const QPixmap &pixmap = m_Images[m_ImageIndex].pixmap;
+	if( pixmap.isNull() )
 	{
 		painter.setPen(Qt::NoPen);
 		painter.setBrush( palette().color(QPalette::Button) );
@@ -248,9 +249,9 @@ void FadeActivity::paintEvent(QPaintEvent* /*event*/)
 	}
 	else
 	{
-		painter.drawPixmap(	r.x() + qRound((r.width()-m_Image.width())*0.5),
-							r.y() + qRound((r.height()-m_Image.height())*0.5),
-							m_Image );
+		painter.drawPixmap(	r.x() + qRound((r.width()-pixmap.width())*0.5),
+							r.y() + qRound((r.height()-pixmap.height())*0.5),
+							pixmap );
 	}
 
 	painter.setOpacity(1.0);
@@ -328,7 +329,7 @@ void ToyActivityWidget::SetText(const QString &text)
 void ToyActivityWidget::SetImagePath(const QString &imagePath)
 {
 	ToyWidget::SetImagePath(imagePath);
-	static_cast<FadeActivity*>(m_Widget)->SetImagePath(m_ImagePath);
+	static_cast<FadeActivity*>(m_Widget)->SetImagePath(0, m_ImagePath);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

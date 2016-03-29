@@ -218,6 +218,9 @@ bool ToyWidget::Save(EosLog &log, const QString &path, QStringList &lines)
 
 	QString imagePath(m_ImagePath);
 	Toy::ResourceAbsolutePathToRelative(&log, path, imagePath);
+	
+	QString imagePath2(m_ImagePath2);
+	Toy::ResourceAbsolutePathToRelative(&log, path, imagePath2);
 
 	line.append( QString("%1").arg(static_cast<int>(m_Visible ? 1 : 0)) );
 	line.append( QString(", %1").arg(Utils::QuotedString(m_Path)) );
@@ -227,8 +230,11 @@ bool ToyWidget::Save(EosLog &log, const QString &path, QStringList &lines)
 	line.append( QString(", %1").arg(Utils::QuotedString(m_TriggerPath)) );
 	line.append( QString(", %1").arg(Utils::QuotedString(m_Text)) );
 	line.append( QString(", %1").arg(Utils::QuotedString(imagePath)) );
+	line.append( QString(", %1").arg(Utils::QuotedString(imagePath2)) );
 	line.append( QString(", %1").arg(m_Color.rgba(),0,16) );
+	line.append( QString(", %1").arg(m_Color2.rgba(),0,16) );
 	line.append( QString(", %1").arg(m_TextColor.rgba(),0,16) );
+	line.append( QString(", %1").arg(m_TextColor2.rgba(),0,16) );
 	line.append( QString(", %1").arg(m_Min) );
 	line.append( QString(", %1").arg(m_Max) );
 	line.append( QString(", %1").arg(m_Min2) );
@@ -276,30 +282,43 @@ bool ToyWidget::Load(EosLog &log, const QString &path, QStringList &lines, int &
 			Toy::ResourceRelativePathToAbsolute(&log, path, imagePath);
 			SetImagePath(imagePath);
 		}
-
-		if(items.size() > 7)
-			SetColor( items[7].toUInt(0,16) );
+		
+		if(HasImagePath2() && items.size()>7)
+		{
+			QString imagePath2( items[7] );
+			Toy::ResourceRelativePathToAbsolute(&log, path, imagePath2);
+			SetImagePath2(imagePath2);
+		}
 
 		if(items.size() > 8)
-			SetTextColor( items[8].toUInt(0,16) );
-
-		if(items.size() > 9)
-			SetMin( items[9] );
+			SetColor( items[8].toUInt(0,16) );
+		
+		if(HasColor2() && items.size()>9)
+			SetColor2( items[9].toUInt(0,16) );
 
 		if(items.size() > 10)
-			SetMax( items[10] );
+			SetTextColor( items[10].toUInt(0,16) );
+		
+		if(HasTextColor2() && items.size()>11)
+			SetTextColor2( items[11].toUInt(0,16) );
+
+		if(items.size() > 12)
+			SetMin( items[12] );
+
+		if(items.size() > 13)
+			SetMax( items[13] );
 
 		if( HasMinMax2() )
 		{
-			if(items.size() > 11)
-				SetMin2( items[11] );
+			if(items.size() > 14)
+				SetMin2( items[14] );
 
-			if(items.size() > 12)
-				SetMax2( items[12] );
+			if(items.size() > 15)
+				SetMax2( items[15] );
 		}
 
-		if(HasBPM() && items.size()>13)
-			SetBPM( items[13] );
+		if(HasBPM() && items.size()>16)
+			SetBPM( items[16] );
 
 		return true;
 	}

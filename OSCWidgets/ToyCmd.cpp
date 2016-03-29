@@ -91,7 +91,7 @@ void ToyCmdWidget::SetText(const QString &text)
 void ToyCmdWidget::SetImagePath(const QString &imagePath)
 {
 	ToyWidget::SetImagePath(imagePath);
-	m_Send->SetImagePath(imagePath);
+	m_Send->SetImagePath(0, imagePath);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
