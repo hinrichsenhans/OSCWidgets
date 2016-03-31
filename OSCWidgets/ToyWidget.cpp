@@ -273,52 +273,52 @@ bool ToyWidget::Load(EosLog &log, const QString &path, QStringList &lines, int &
 		if(HasTriggerPath() && items.size() > 5)
 			SetTriggerPath( items[5] );
 
-		if(items.size() > 5)
-			SetText( items[5] );
-
 		if(items.size() > 6)
+			SetText( items[6] );
+
+		if(items.size() > 7)
 		{
-			QString imagePath( items[6] );
+			QString imagePath( items[7] );
 			Toy::ResourceRelativePathToAbsolute(&log, path, imagePath);
 			SetImagePath(imagePath);
 		}
 		
-		if(HasImagePath2() && items.size()>7)
+		if(HasImagePath2() && items.size()>8)
 		{
-			QString imagePath2( items[7] );
+			QString imagePath2( items[8] );
 			Toy::ResourceRelativePathToAbsolute(&log, path, imagePath2);
 			SetImagePath2(imagePath2);
 		}
 
-		if(items.size() > 8)
-			SetColor( items[8].toUInt(0,16) );
+		if(items.size() > 9)
+			SetColor( items[9].toUInt(0,16) );
 		
-		if(HasColor2() && items.size()>9)
-			SetColor2( items[9].toUInt(0,16) );
+		if(HasColor2() && items.size()>10)
+			SetColor2( items[10].toUInt(0,16) );
 
-		if(items.size() > 10)
-			SetTextColor( items[10].toUInt(0,16) );
+		if(items.size() > 11)
+			SetTextColor( items[11].toUInt(0,16) );
 		
-		if(HasTextColor2() && items.size()>11)
-			SetTextColor2( items[11].toUInt(0,16) );
-
-		if(items.size() > 12)
-			SetMin( items[12] );
+		if(HasTextColor2() && items.size()>12)
+			SetTextColor2( items[12].toUInt(0,16) );
 
 		if(items.size() > 13)
-			SetMax( items[13] );
+			SetMin( items[13] );
+
+		if(items.size() > 14)
+			SetMax( items[14] );
 
 		if( HasMinMax2() )
 		{
-			if(items.size() > 14)
-				SetMin2( items[14] );
-
 			if(items.size() > 15)
-				SetMax2( items[15] );
+				SetMin2( items[15] );
+
+			if(items.size() > 16)
+				SetMax2( items[16] );
 		}
 
-		if(HasBPM() && items.size()>16)
-			SetBPM( items[16] );
+		if(HasBPM() && items.size()>17)
+			SetBPM( items[17] );
 
 		return true;
 	}

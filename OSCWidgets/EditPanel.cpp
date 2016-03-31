@@ -137,6 +137,7 @@ void ButtonRow::AddWidget(QWidget *w)
 
 EditPanel::EditPanel(QWidget *parent)
 	: QWidget(parent, Qt::Window)
+	, m_IgnoreEdits(0)
 {
 	QGridLayout *layout = new QGridLayout(this);
 	
@@ -421,9 +422,9 @@ void EditPanel::SetImagePath2Enabled(bool b)
 
 void EditPanel::UpdateLocal(bool primaryPath)
 {
-	if( m_Path->isEnabled() )
+	if(m_Path->isEnabled() && !m_Path->text().isEmpty())
 	{
-		if( m_Path2->isEnabled() )
+		if(m_Path2->isEnabled() && !m_Path2->text().isEmpty())
 		{
 			// both enabled
 			QString path;
@@ -444,7 +445,7 @@ void EditPanel::UpdateLocal(bool primaryPath)
 			m_Local->setEnabled(true);
 		}
 	}
-	else if( m_Path2->isEnabled() )
+	else if(m_Path2->isEnabled() && !m_Path2->text().isEmpty())
 	{
 		if( !primaryPath )
 		{
@@ -474,7 +475,10 @@ void EditPanel::GetPath(QString &path) const
 
 void EditPanel::SetPath(const QString &path)
 {
+	m_IgnoreEdits++;
 	m_Path->setText(path);
+	m_IgnoreEdits--;
+
 	UpdateLocal(/*primaryPath*/true);
 }
 
@@ -498,7 +502,10 @@ void EditPanel::GetPath2(QString &path) const
 
 void EditPanel::SetPath2(const QString &path)
 {
+	m_IgnoreEdits++;
 	m_Path2->setText(path);
+	m_IgnoreEdits--;
+
 	UpdateLocal(/*primaryPath*/false);
 }
 
@@ -814,14 +821,16 @@ void EditPanel::onHiddenStateChanged(int /*state*/)
 
 void EditPanel::onPathTextChanged(const QString& /*text*/)
 {
-	UpdateLocal(/*primaryPath*/true);
+	if(m_IgnoreEdits == 0)
+		UpdateLocal(/*primaryPath*/true);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void EditPanel::onPath2TextChanged(const QString& /*text*/)
 {
-	UpdateLocal(/*primaryPath*/false);
+	if(m_IgnoreEdits == 0)
+		UpdateLocal(/*primaryPath*/false);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
