@@ -290,7 +290,7 @@ void LogWidget::paintEvent(QPaintEvent* /*event*/)
 			index = 0;
 	}
 
-	if(m_LineWidth != maxLineWidth)
+	if(m_LineWidth < maxLineWidth)
 	{
 		m_LineWidth = maxLineWidth;
 		UpdateHScrollBar();
