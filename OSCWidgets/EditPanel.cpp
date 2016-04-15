@@ -177,7 +177,7 @@ EditPanel::EditPanel(QWidget *parent)
 	
 	++row;
 	m_Local = new QCheckBox(tr("Local"), this);
-	m_Local->setToolTip( tr("send commands to other OSCToy widgets") );
+	m_Local->setToolTip( tr("send commands to other OSCWidgets") );
 	connect(m_Local, SIGNAL(stateChanged(int)), this, SLOT(onLocalStateChanged(int)));
 	layout->addWidget(m_Local, row, 1, 1, 2);
 	
