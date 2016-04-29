@@ -86,6 +86,7 @@
     <ClCompile Include="..\..\EosSyncLib\EosSyncLib\EosUdp_Win.cpp" />
     <ClCompile Include="..\..\EosSyncLib\EosSyncLib\OSCParser.cpp" />
     <ClCompile Include="EditPanel.cpp" />
+    <ClCompile Include="EosPlatform.cpp" />
     <ClCompile Include="FadeButton.cpp" />
     <ClCompile Include="LogFile.cpp" />
     <ClCompile Include="LogWidget.cpp" />
@@ -93,8 +94,11 @@
     <ClCompile Include="moc\moc_LogWidget.cpp" />
     <ClCompile Include="moc\moc_ToyActivity.cpp" />
     <ClCompile Include="moc\moc_ToyFlicker.cpp" />
+    <ClCompile Include="moc\moc_ToyWindow.cpp" />
     <ClCompile Include="ToyActivity.cpp" />
     <ClCompile Include="ToyFlicker.cpp" />
+    <ClCompile Include="ToyLabel.cpp" />
+    <ClCompile Include="ToyWindow.cpp" />
     <ClCompile Include="ToyXY.cpp" />
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="main.cpp" />
@@ -232,6 +236,7 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">moc\moc_ToyActivity.cpp</Outputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\qt\4.8.1\bin\moc.exe</AdditionalInputs>
     </CustomBuild>
+    <ClInclude Include="EosPlatform.h" />
     <ClInclude Include="LogFile.h" />
     <CustomBuild Include="LogWidget.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\qt\4.8.1\bin\moc.exe LogWidget.h -o moc\moc_LogWidget.cpp</Command>
@@ -241,6 +246,17 @@
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\qt\4.8.1\bin\moc.exe LogWidget.h -o moc\moc_LogWidget.cpp</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">moc LogWidget.h</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">moc\moc_LogWidget.cpp</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\qt\4.8.1\bin\moc.exe</AdditionalInputs>
+    </CustomBuild>
+    <ClInclude Include="ToyLabel.h" />
+    <CustomBuild Include="ToyWindow.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\qt\4.8.1\bin\moc.exe ToyWindow.h -o moc\moc_ToyWindow.cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">moc ToyWindow.h</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">moc\moc_ToyWindow.cpp</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\qt\4.8.1\bin\moc.exe</AdditionalInputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\qt\4.8.1\bin\moc.exe ToyWindow.h -o moc\moc_ToyWindow.cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">moc ToyWindow.h</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">moc\moc_ToyWindow.cpp</Outputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\qt\4.8.1\bin\moc.exe</AdditionalInputs>
     </CustomBuild>
     <ClInclude Include="Utils.h" />
