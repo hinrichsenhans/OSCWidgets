@@ -54,6 +54,10 @@ Toy* Toys::AddToy(Toy::EnumToyType type)
 	Toy *toy = Toy::Create(type, m_pClient, /*parent*/0, GetWindowFlags());
 	if( toy )
 	{
+		QSize gridSize;
+		toy->GetDefaultGridSize(gridSize);
+		toy->SetGridSize(gridSize);
+		
 		connect(toy, SIGNAL(recvWidgetsChanged()), this, SLOT(onRecvWidgetsChanged()));
 		connect(toy, SIGNAL(closing(Toy*)), this, SLOT(onToyClosing(Toy*)));
 		connect(toy, SIGNAL(changed()), this, SLOT(onToyChanged()));

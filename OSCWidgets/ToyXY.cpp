@@ -464,7 +464,6 @@ void ToyXYWidget::onPosChanged(const QPointF& /*pos*/)
 ToyXYGrid::ToyXYGrid(Client *pClient, QWidget *parent, Qt::WindowFlags flags)
 	: ToyGrid(TOY_XY_GRID, pClient, parent, flags)
 {
-	SetGridSize( QSize(1,1) );
 }
 
 ////////////////////////////////////////////////////////////////////////////////

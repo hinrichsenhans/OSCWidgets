@@ -472,7 +472,6 @@ void ToyActivityWidget::Recv(const QString &path, const OSCArgument *args, size_
 ToyActivityGrid::ToyActivityGrid(Client *pClient, QWidget *parent, Qt::WindowFlags flags)
 	: ToyGrid(TOY_ACTIVITY_GRID, pClient, parent, flags)
 {
-	SetGridSize( QSize(3,1) );
 }
 
 ////////////////////////////////////////////////////////////////////////////////

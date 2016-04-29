@@ -43,6 +43,7 @@
 #endif
 
 class LogWidget;
+class EosPlatform;
 class SettingsPanel;
 class AdvancedPanel;
 
@@ -205,7 +206,8 @@ private:
 	QSystemTrayIcon		*m_SystemTray;
 	QMenu				*m_SystemTrayMenu;
 	unsigned int		m_CloseAllowed;
-
+	EosPlatform			*m_Platform;
+	bool				m_SystemIdleAllowed;
 
 	virtual void Start();
 	virtual void StartUdpInThreads(const QString &ip, unsigned short port);
@@ -222,12 +224,14 @@ private:
 	virtual void ClearNetEventQ();
 	virtual void ProcessNetEventQ();
 	virtual bool ToyClient_Send(bool local, char *data, size_t size);
+	virtual void ToyClient_ResourceRelativePathToAbsolute(QString &path);
 	virtual void PopulateToyTree();
 	virtual void MakeToyIcon(const Toy &toy, const QSize &iconSize, QIcon &icon) const;
 	virtual void LoadAdvancedSettings();
 	virtual void SaveAdvancedSettings();
 	virtual void PromptForUnsavedChanges(bool &abortPendingOperation);
 	virtual QMenuBar* InitMenuBar(bool systemMenuBar);
+	virtual void SetSystemIdleAllowed(bool b);
 };
 
 ////////////////////////////////////////////////////////////////////////////////

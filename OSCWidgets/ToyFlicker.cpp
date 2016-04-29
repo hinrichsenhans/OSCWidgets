@@ -465,8 +465,6 @@ ToyFlickerGrid::ToyFlickerGrid(Client *pClient, QWidget *parent, Qt::WindowFlags
 	m_Pause->setText( tr("Pause All") );
 	connect(m_Pause, SIGNAL(clicked(bool)), this, SLOT(onPauseClicked(bool)));
 
-	SetGridSize( QSize(1,1) );
-
 	StartTimer();
 }
 

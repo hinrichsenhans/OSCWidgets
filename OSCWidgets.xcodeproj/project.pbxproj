@@ -7,12 +7,18 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		69283AE61CC0373D00F2F31C /* moc_ToyWindow.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 69283AE51CC0373D00F2F31C /* moc_ToyWindow.cpp */; };
 		695301651C9CB459001CA235 /* ToyActivity.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 695301631C9CB459001CA235 /* ToyActivity.cpp */; };
 		695301681C9CB4F5001CA235 /* moc_ToyActivity.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 695301671C9CB4F5001CA235 /* moc_ToyActivity.cpp */; };
+		69625E191CD1B6D800DFCD46 /* ToyLabel.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 69625E171CD1B6D800DFCD46 /* ToyLabel.cpp */; };
 		69A527D71C721D50002B7FA1 /* FadeButton.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 69A527D31C721D50002B7FA1 /* FadeButton.cpp */; };
 		69A527D81C721D50002B7FA1 /* ToyFlicker.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 69A527D51C721D50002B7FA1 /* ToyFlicker.cpp */; };
 		69A527DD1C721E2C002B7FA1 /* moc_FadeButton.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 69A527DB1C721E2C002B7FA1 /* moc_FadeButton.cpp */; };
 		69A527DE1C721E2C002B7FA1 /* moc_ToyFlicker.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 69A527DC1C721E2C002B7FA1 /* moc_ToyFlicker.cpp */; };
+		69B3CA401CD2C793006D6582 /* EosPlatform_Mac_Native.mm in Build Sources */ = {isa = PBXBuildFile; fileRef = 69B3CA3B1CD2C793006D6582 /* EosPlatform_Mac_Native.mm */; };
+		69B3CA411CD2C793006D6582 /* EosPlatform_Mac.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 69B3CA3C1CD2C793006D6582 /* EosPlatform_Mac.cpp */; };
+		69B3CA421CD2C793006D6582 /* EosPlatform.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 69B3CA3E1CD2C793006D6582 /* EosPlatform.cpp */; };
+		69F843A81CBF421B008F5AF4 /* ToyWindow.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 69F843A61CBF421B008F5AF4 /* ToyWindow.cpp */; };
 		69FD62241CB370F0006A81D8 /* LogFile.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 69FD62201CB370F0006A81D8 /* LogFile.cpp */; };
 		69FD62251CB370F0006A81D8 /* LogWidget.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 69FD62221CB370F0006A81D8 /* LogWidget.cpp */; };
 		69FD62281CB37170006A81D8 /* moc_LogWidget.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 69FD62271CB37170006A81D8 /* moc_LogWidget.cpp */; };
@@ -66,15 +72,27 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		69283AE51CC0373D00F2F31C /* moc_ToyWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = moc_ToyWindow.cpp; path = OSCWidgets/moc_ToyWindow.cpp; sourceTree = SOURCE_ROOT; };
 		695301631C9CB459001CA235 /* ToyActivity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ToyActivity.cpp; path = OSCWidgets/ToyActivity.cpp; sourceTree = SOURCE_ROOT; };
 		695301641C9CB459001CA235 /* ToyActivity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ToyActivity.h; path = OSCWidgets/ToyActivity.h; sourceTree = SOURCE_ROOT; };
 		695301671C9CB4F5001CA235 /* moc_ToyActivity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = moc_ToyActivity.cpp; path = OSCWidgets/moc_ToyActivity.cpp; sourceTree = SOURCE_ROOT; };
+		69625E171CD1B6D800DFCD46 /* ToyLabel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ToyLabel.cpp; path = OSCWidgets/ToyLabel.cpp; sourceTree = SOURCE_ROOT; };
+		69625E181CD1B6D800DFCD46 /* ToyLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ToyLabel.h; path = OSCWidgets/ToyLabel.h; sourceTree = SOURCE_ROOT; };
 		69A527D31C721D50002B7FA1 /* FadeButton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FadeButton.cpp; path = OSCWidgets/FadeButton.cpp; sourceTree = SOURCE_ROOT; };
 		69A527D41C721D50002B7FA1 /* FadeButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FadeButton.h; path = OSCWidgets/FadeButton.h; sourceTree = SOURCE_ROOT; };
 		69A527D51C721D50002B7FA1 /* ToyFlicker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ToyFlicker.cpp; path = OSCWidgets/ToyFlicker.cpp; sourceTree = SOURCE_ROOT; };
 		69A527D61C721D50002B7FA1 /* ToyFlicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ToyFlicker.h; path = OSCWidgets/ToyFlicker.h; sourceTree = SOURCE_ROOT; };
 		69A527DB1C721E2C002B7FA1 /* moc_FadeButton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = moc_FadeButton.cpp; path = OSCWidgets/moc_FadeButton.cpp; sourceTree = SOURCE_ROOT; };
 		69A527DC1C721E2C002B7FA1 /* moc_ToyFlicker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = moc_ToyFlicker.cpp; path = OSCWidgets/moc_ToyFlicker.cpp; sourceTree = SOURCE_ROOT; };
+		69B3CA391CD2C793006D6582 /* EosPlatform_Mac_Bridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EosPlatform_Mac_Bridge.h; path = OSCWidgets/EosPlatform_Mac_Bridge.h; sourceTree = SOURCE_ROOT; };
+		69B3CA3A1CD2C793006D6582 /* EosPlatform_Mac_Native.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EosPlatform_Mac_Native.h; path = OSCWidgets/EosPlatform_Mac_Native.h; sourceTree = SOURCE_ROOT; };
+		69B3CA3B1CD2C793006D6582 /* EosPlatform_Mac_Native.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = EosPlatform_Mac_Native.mm; path = OSCWidgets/EosPlatform_Mac_Native.mm; sourceTree = SOURCE_ROOT; };
+		69B3CA3C1CD2C793006D6582 /* EosPlatform_Mac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EosPlatform_Mac.cpp; path = OSCWidgets/EosPlatform_Mac.cpp; sourceTree = SOURCE_ROOT; };
+		69B3CA3D1CD2C793006D6582 /* EosPlatform_Mac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EosPlatform_Mac.h; path = OSCWidgets/EosPlatform_Mac.h; sourceTree = SOURCE_ROOT; };
+		69B3CA3E1CD2C793006D6582 /* EosPlatform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EosPlatform.cpp; path = OSCWidgets/EosPlatform.cpp; sourceTree = SOURCE_ROOT; };
+		69B3CA3F1CD2C793006D6582 /* EosPlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EosPlatform.h; path = OSCWidgets/EosPlatform.h; sourceTree = SOURCE_ROOT; };
+		69F843A61CBF421B008F5AF4 /* ToyWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ToyWindow.cpp; path = OSCWidgets/ToyWindow.cpp; sourceTree = SOURCE_ROOT; };
+		69F843A71CBF421B008F5AF4 /* ToyWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ToyWindow.h; path = OSCWidgets/ToyWindow.h; sourceTree = SOURCE_ROOT; };
 		69FD62201CB370F0006A81D8 /* LogFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LogFile.cpp; path = OSCWidgets/LogFile.cpp; sourceTree = SOURCE_ROOT; };
 		69FD62211CB370F0006A81D8 /* LogFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LogFile.h; path = OSCWidgets/LogFile.h; sourceTree = SOURCE_ROOT; };
 		69FD62221CB370F0006A81D8 /* LogWidget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LogWidget.cpp; path = OSCWidgets/LogWidget.cpp; sourceTree = SOURCE_ROOT; };
@@ -203,6 +221,7 @@
 				971D40D61BD1AF3D00661378 /* moc_ToySine.cpp */,
 				971D40D71BD1AF3D00661378 /* moc_ToySlider.cpp */,
 				971D40D81BD1AF3D00661378 /* moc_ToyWidget.cpp */,
+				69283AE51CC0373D00F2F31C /* moc_ToyWindow.cpp */,
 				971D40D91BD1AF3D00661378 /* moc_ToyXY.cpp */,
 			);
 			name = moc;
@@ -249,6 +268,13 @@
 				971D40BF1BD1AB8800661378 /* moc */,
 				971D40941BD1AB7F00661378 /* EditPanel.cpp */,
 				971D40951BD1AB7F00661378 /* EditPanel.h */,
+				69B3CA391CD2C793006D6582 /* EosPlatform_Mac_Bridge.h */,
+				69B3CA3A1CD2C793006D6582 /* EosPlatform_Mac_Native.h */,
+				69B3CA3B1CD2C793006D6582 /* EosPlatform_Mac_Native.mm */,
+				69B3CA3C1CD2C793006D6582 /* EosPlatform_Mac.cpp */,
+				69B3CA3D1CD2C793006D6582 /* EosPlatform_Mac.h */,
+				69B3CA3E1CD2C793006D6582 /* EosPlatform.cpp */,
+				69B3CA3F1CD2C793006D6582 /* EosPlatform.h */,
 				69A527D31C721D50002B7FA1 /* FadeButton.cpp */,
 				69A527D41C721D50002B7FA1 /* FadeButton.h */,
 				69FD62201CB370F0006A81D8 /* LogFile.cpp */,
@@ -278,6 +304,8 @@
 				69A527D61C721D50002B7FA1 /* ToyFlicker.h */,
 				971D40A31BD1AB7F00661378 /* ToyGrid.cpp */,
 				971D40A41BD1AB7F00661378 /* ToyGrid.h */,
+				69625E171CD1B6D800DFCD46 /* ToyLabel.cpp */,
+				69625E181CD1B6D800DFCD46 /* ToyLabel.h */,
 				971D40A51BD1AB7F00661378 /* ToyMath.h */,
 				971D40A61BD1AB7F00661378 /* ToyMetro.cpp */,
 				971D40A71BD1AB7F00661378 /* ToyMetro.h */,
@@ -291,6 +319,8 @@
 				971D40AD1BD1AB7F00661378 /* ToySlider.h */,
 				971D40AE1BD1AB7F00661378 /* ToyWidget.cpp */,
 				971D40AF1BD1AB7F00661378 /* ToyWidget.h */,
+				69F843A61CBF421B008F5AF4 /* ToyWindow.cpp */,
+				69F843A71CBF421B008F5AF4 /* ToyWindow.h */,
 				971D40961BD1AB7F00661378 /* ToyXY.cpp */,
 				971D40B01BD1AB7F00661378 /* ToyXY.h */,
 				9766D4411BD9E3D3005BF988 /* Utils.cpp */,
@@ -359,6 +389,7 @@
 				971D40C91BD1AE5600661378 /* moc ToySine */,
 				971D40CA1BD1AE8900661378 /* moc ToySlider */,
 				971D40CB1BD1AEBE00661378 /* moc ToyWidget */,
+				69283AE41CC0370000F2F31C /* moc ToyWindow */,
 				971D40CC1BD1AEF600661378 /* moc ToyXY */,
 				C29B8785722055ED95EF7B57 /* Build Sources */,
 				2A1043669E6E5A7426EA502A /* Frameworks & Libraries */,
@@ -412,6 +443,22 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		69283AE41CC0370000F2F31C /* moc ToyWindow */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				OSCWidgets/ToyWindow.h,
+			);
+			name = "moc ToyWindow";
+			outputPaths = (
+				OSCWidgets/moc_ToyWindow.cpp,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/Developer/Tools/Qt/moc OSCWidgets/ToyWindow.h -o OSCWidgets/moc_ToyWindow.cpp";
+		};
 		695301661C9CB474001CA235 /* moc ToyActivity */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -767,12 +814,15 @@
 				971D40E11BD1AF3E00661378 /* moc_ToyMetro.cpp in Build Sources */,
 				971D40B71BD1AB7F00661378 /* ToyCmd.cpp in Build Sources */,
 				97E137371AB28C3A0056BE05 /* main.cpp in Build Sources */,
+				69B3CA401CD2C793006D6582 /* EosPlatform_Mac_Native.mm in Build Sources */,
+				69B3CA421CD2C793006D6582 /* EosPlatform.cpp in Build Sources */,
 				971D40BE1BD1AB7F00661378 /* ToyWidget.cpp in Build Sources */,
 				69FD62241CB370F0006A81D8 /* LogFile.cpp in Build Sources */,
 				971D40DF1BD1AF3E00661378 /* moc_ToyEncoder.cpp in Build Sources */,
 				971D40B31BD1AB7F00661378 /* NetworkThreads.cpp in Build Sources */,
 				971D40BC1BD1AB7F00661378 /* ToySine.cpp in Build Sources */,
 				9730C2E71AB7C0230039899F /* moc_MainWindow.cpp in Build Sources */,
+				69F843A81CBF421B008F5AF4 /* ToyWindow.cpp in Build Sources */,
 				97E1374B1AB28C720056BE05 /* EosTcp_Mac.cpp in Build Sources */,
 				9766D4461BD9E460005BF988 /* moc_ToyPedal.cpp in Build Sources */,
 				97FE38531B7FB56400B5DE7E /* Toys.cpp in Build Sources */,
@@ -787,12 +837,15 @@
 				971D40E01BD1AF3E00661378 /* moc_ToyGrid.cpp in Build Sources */,
 				695301681C9CB4F5001CA235 /* moc_ToyActivity.cpp in Build Sources */,
 				971D40B41BD1AB7F00661378 /* SettingsPanel.cpp in Build Sources */,
+				69B3CA411CD2C793006D6582 /* EosPlatform_Mac.cpp in Build Sources */,
+				69283AE61CC0373D00F2F31C /* moc_ToyWindow.cpp in Build Sources */,
 				97FE38561B7FC38100B5DE7E /* moc_Toys.cpp in Build Sources */,
 				971D40B81BD1AB7F00661378 /* ToyEncoder.cpp in Build Sources */,
 				971D40E51BD1AF3E00661378 /* moc_ToyWidget.cpp in Build Sources */,
 				69A527D81C721D50002B7FA1 /* ToyFlicker.cpp in Build Sources */,
 				971D40E41BD1AF3E00661378 /* moc_ToySlider.cpp in Build Sources */,
 				69A527DE1C721E2C002B7FA1 /* moc_ToyFlicker.cpp in Build Sources */,
+				69625E191CD1B6D800DFCD46 /* ToyLabel.cpp in Build Sources */,
 				971D40B61BD1AB7F00661378 /* ToyButton.cpp in Build Sources */,
 				971D40DE1BD1AF3E00661378 /* moc_ToyCmd.cpp in Build Sources */,
 				979091D91B1912D400E4291B /* EosUdp_Mac.cpp in Build Sources */,

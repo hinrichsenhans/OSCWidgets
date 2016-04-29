@@ -102,6 +102,7 @@ public:
 	virtual bool HasBPM() const {return false;}
 	virtual const QString& GetHelpText() const {return m_HelpText;}
 	virtual void SetLabel(const QString &label);
+	virtual void ClearLabel();
 	virtual void Recv(const QString &path, const OSCArgument *args, size_t count);
 	virtual bool Save(EosLog &log, const QString &path, QStringList &lines);
 	virtual bool Load(EosLog &log, const QString &path, QStringList &lines, int &index);

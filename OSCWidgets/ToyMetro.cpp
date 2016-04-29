@@ -459,8 +459,6 @@ ToyMetroGrid::ToyMetroGrid(Client *pClient, QWidget *parent, Qt::WindowFlags fla
 	m_Fan->setText( tr("Fan") );
 	connect(m_Fan, SIGNAL(clicked(bool)), this, SLOT(onFanClicked(bool)));
 
-	SetGridSize( QSize(1,1) );
-
 	StartTimer();
 }
 

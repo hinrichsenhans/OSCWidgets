@@ -31,6 +31,8 @@
 #include "ToyCmd.h"
 #include "ToyFlicker.h"
 #include "ToyActivity.h"
+#include "ToyLabel.h"
+#include "ToyWindow.h"
 
 #ifdef WIN32
 	#include <Windows.h>
@@ -61,6 +63,8 @@ Toy::Toy(EnumToyType type, Client *pClient, QWidget *parent, Qt::WindowFlags fla
 	QPalette pal( palette() );
 	pal.setColor(QPalette::ButtonText, QColor(200,200,200));
 	setPalette(pal);
+	
+	setContentsMargins(MARGIN, MARGIN, MARGIN, MARGIN);
 
 	SetDefaultWindowIcon(*this);
 }
@@ -87,6 +91,8 @@ Toy* Toy::Create(EnumToyType type, Client *pClient, QWidget *parent, Qt::WindowF
 		case TOY_SINE_GRID:		return (new ToySineGrid(pClient,parent,flags));
 		case TOY_FLICKER_GRID:	return (new ToyFlickerGrid(pClient,parent,flags));
 		case TOY_ACTIVITY_GRID:	return (new ToyActivityGrid(pClient,parent,flags));
+		case TOY_LABEL_GRID:	return (new ToyLabelGrid(pClient,parent,flags));
+		case TOY_WINDOW:		return (new ToyWindow(pClient,parent,flags));
 	}
 	
 	return 0;
@@ -108,6 +114,8 @@ void Toy::GetName(EnumToyType type, QString &name)
 		case TOY_CMD_GRID:		name=qApp->tr("Commands"); break;
 		case TOY_FLICKER_GRID:	name=qApp->tr("Flicker"); break;
 		case TOY_ACTIVITY_GRID:	name=qApp->tr("Activity"); break;
+		case TOY_LABEL_GRID:	name=qApp->tr("Label"); break;
+		case TOY_WINDOW:		name=qApp->tr("Window"); break;
 		default:				name.clear(); break;
 	}
 }
@@ -128,6 +136,8 @@ void Toy::GetDefaultPathName(EnumToyType type, QString &name)
 		case TOY_CMD_GRID:		name=qApp->tr("cmd"); break;
 		case TOY_FLICKER_GRID:	name=qApp->tr("flicker"); break;
 		case TOY_ACTIVITY_GRID:	name=qApp->tr("activity"); break;
+		case TOY_LABEL_GRID:	name=qApp->tr("label"); break;
+		case TOY_WINDOW:		name=qApp->tr("window"); break;
 		default:				name.clear(); break;
 	}
 }
@@ -246,22 +256,23 @@ void Toy::ResourceRelativePathToAbsolute(EosLog *log, const QString &filePath, Q
 		{
 			QDir fileDir( QFileInfo(filePath).absoluteDir() );
 			resourcePath = QDir::cleanPath( fileDir.absoluteFilePath(resourcePath) );
-			if( log )
+		}
+		
+		if( log )
+		{
+			if( QFileInfo(resourcePath).exists() )
 			{
-				if( QFileInfo(resourcePath).exists() )
-				{
-					QString msg = tr("Loaded resource \"%1\" @ \"%2\"")
-						.arg( QDir::toNativeSeparators(fi.filePath()) )
-						.arg( QDir::toNativeSeparators(resourcePath) );
-					log->AddDebug( msg.toUtf8().constData() );
-				}
-				else
-				{
-					QString msg = tr("Missing resource \"%1\" @ \"%2\"")
-						.arg( QDir::toNativeSeparators(fi.filePath()) )
-						.arg( QDir::toNativeSeparators(resourcePath) );
-					log->AddError( msg.toUtf8().constData() );
-				}
+				QString msg = tr("Loaded resource \"%1\" @ \"%2\"")
+				.arg( QDir::toNativeSeparators(fi.filePath()) )
+				.arg( QDir::toNativeSeparators(resourcePath) );
+				log->AddDebug( msg.toUtf8().constData() );
+			}
+			else
+			{
+				QString msg = tr("Missing resource \"%1\" @ \"%2\"")
+				.arg( QDir::toNativeSeparators(fi.filePath()) )
+				.arg( QDir::toNativeSeparators(resourcePath) );
+				log->AddError( msg.toUtf8().constData() );
 			}
 		}
 	}
@@ -278,26 +289,26 @@ void Toy::ResourceAbsolutePathToRelative(EosLog *log, const QString &filePath, Q
 		{
 			QDir fileDir( QFileInfo(filePath).absoluteDir() );
 			resourcePath = QDir::cleanPath( fileDir.relativeFilePath(fi.absoluteFilePath()) );
-
-			if( log )
+		}
+		
+		if( log )
+		{
+			QString sanityCheck(resourcePath);
+			Toy::ResourceRelativePathToAbsolute(/*log*/0, filePath, sanityCheck);
+			
+			if( QFileInfo(sanityCheck).isFile() )
 			{
-				QString sanityCheck(resourcePath);
-				Toy::ResourceRelativePathToAbsolute(/*log*/0, filePath, sanityCheck);
-
-				if( QFileInfo(sanityCheck).isFile() )
-				{
-					QString msg = tr("Saved resource \"%1\" @ \"%2\"")
-						.arg( QDir::toNativeSeparators(fi.filePath()) )
-						.arg( QDir::toNativeSeparators(resourcePath) );
-					log->AddDebug( msg.toUtf8().constData() );
-				}
-				else
-				{
-					QString msg = tr("Failed to save resource \"%1\" @ \"%2\"")
-						.arg( QDir::toNativeSeparators(fi.filePath()) )
-						.arg( QDir::toNativeSeparators(resourcePath) );
-					log->AddError( msg.toUtf8().constData() );
-				}
+				QString msg = tr("Saved resource \"%1\" @ \"%2\"")
+				.arg( QDir::toNativeSeparators(fi.filePath()) )
+				.arg( QDir::toNativeSeparators(resourcePath) );
+				log->AddDebug( msg.toUtf8().constData() );
+			}
+			else
+			{
+				QString msg = tr("Failed to save resource \"%1\" @ \"%2\"")
+				.arg( QDir::toNativeSeparators(fi.filePath()) )
+				.arg( QDir::toNativeSeparators(resourcePath) );
+				log->AddError( msg.toUtf8().constData() );
 			}
 		}
 	}

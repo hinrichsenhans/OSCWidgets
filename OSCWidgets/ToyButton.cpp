@@ -257,7 +257,6 @@ void ToyButtonWidget::onReleased()
 ToyButtonGrid::ToyButtonGrid(Client *pClient, QWidget *parent, Qt::WindowFlags flags)
 	: ToyGrid(TOY_BUTTON_GRID, pClient, parent, flags)
 {
-	SetGridSize( QSize(5,1) );
 }
 
 ////////////////////////////////////////////////////////////////////////////////

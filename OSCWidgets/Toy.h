@@ -60,6 +60,8 @@ public:
 		TOY_SINE_GRID,
 		TOY_FLICKER_GRID,
 		TOY_ACTIVITY_GRID,
+		TOY_LABEL_GRID,
+		TOY_WINDOW,
 		
 		TOY_COUNT,
 		TOY_INVALID
@@ -69,6 +71,7 @@ public:
 	{
 	public:
 		virtual bool ToyClient_Send(bool local, char *data, size_t size) = 0;
+		virtual void ToyClient_ResourceRelativePathToAbsolute(QString &path) = 0;
 	};
 	
 	typedef std::multimap<QString,ToyWidget*> RECV_WIDGETS;
@@ -90,7 +93,15 @@ public:
 	virtual void SetImagePath(const QString &imagePath) = 0;
 	virtual const QColor& GetColor() const = 0;
 	virtual void SetColor(const QColor &color) = 0;
+	virtual bool HasColor2() const = 0;
+	virtual const QColor& GetColor2() const = 0;
+	virtual void SetColor2(const QColor &color2) = 0;
+	virtual bool HasTextColor() const = 0;
+	virtual const QColor& GetTextColor() const = 0;
+	virtual void SetTextColor(const QColor &textColor) = 0;
 	virtual void GetName(QString &name) const = 0;
+	virtual void SetGridSize(const QSize &gridSize) = 0;
+	virtual void GetDefaultGridSize(QSize &gridSize) const = 0;
 	virtual void ClearLabels() = 0;
 	virtual void StartTimer() {}
 	virtual void Connected() {}

@@ -494,9 +494,7 @@ ToyPedalGrid::ToyPedalGrid(Client *pClient, QWidget *parent, Qt::WindowFlags fla
 	m_Press->resize( m_Press->sizeHint() );
 	connect(m_Press, SIGNAL(pressed()), this, SLOT(onPressPressed()));
 	connect(m_Press, SIGNAL(released()), this, SLOT(onPressReleased()));
-
-	SetGridSize( QSize(5,1) );
-
+	
 	StartTimer();
 }
 

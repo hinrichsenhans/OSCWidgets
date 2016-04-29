@@ -42,7 +42,7 @@
 #define HALF_BORDER			1	// BORDER/2
 
 #define BUTTON_HOVER_SPEED	0.002f
-#define BUTTON_CLICK_MS		500
+#define BUTTON_CLICK_MS		300
 #define BUTTON_BRIGHTESS	0.2f
 #define BUTTON_RAISE		6
 

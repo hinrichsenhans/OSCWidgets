@@ -123,6 +123,8 @@ class ToyActivityGrid
 {
 public:
 	ToyActivityGrid(Client *pClient, QWidget *parent, Qt::WindowFlags flags);
+	
+	virtual void GetDefaultGridSize(QSize &gridSize) const {gridSize = QSize(3,1);}
 
 protected:
 	virtual ToyWidget* CreateWidget();

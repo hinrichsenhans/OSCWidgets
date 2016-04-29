@@ -210,8 +210,6 @@ ToyCmdGrid::ToyCmdGrid(Client *pClient, QWidget *parent, Qt::WindowFlags flags)
 	connect(m_Startup, SIGNAL(stateChanged(int)), this, SLOT(onStartupStateChanged(int)));
 	
 	m_ButtonsHeight = qMax(m_SendAll->sizeHint().height(), m_Startup->height());
-
-	SetGridSize( QSize(1,6) );
 	
 	UpdateSendAllButton();
 }

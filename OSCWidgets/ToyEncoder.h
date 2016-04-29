@@ -80,6 +80,7 @@ class ToyEncoderWidget
 public:
 	ToyEncoderWidget(QWidget *parent);
 	
+	virtual void GetDefaultGridSize(QSize &gridSize) const {gridSize = QSize(4,1);}
 	virtual void SetText(const QString &text);
 	virtual void SetImagePath(const QString &imagePath);
 	virtual void SetColor(const QColor &color);

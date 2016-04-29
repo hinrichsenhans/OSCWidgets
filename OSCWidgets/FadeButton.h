@@ -86,6 +86,7 @@ protected:
 	virtual void SetHover(float percent);
 	virtual void AutoSizeFont();
 	virtual void UpdateImage(size_t index);
+	virtual void RenderBackground(QPainter &painter, QRectF &r);
 	virtual void resizeEvent(QResizeEvent *event);
 	virtual void paintEvent(QPaintEvent *event);
 	virtual bool event(QEvent *event);

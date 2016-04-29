@@ -206,6 +206,13 @@ void ToyWidget::SetLabel(const QString &)
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void ToyWidget::ClearLabel()
+{
+	SetLabel( QString() );
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void ToyWidget::Recv(const QString& /*path*/, const OSCArgument* /*args*/, size_t /*count*/)
 {
 }
@@ -291,16 +298,16 @@ bool ToyWidget::Load(EosLog &log, const QString &path, QStringList &lines, int &
 		}
 
 		if(items.size() > 9)
-			SetColor( items[9].toUInt(0,16) );
+			SetColor( QColor::fromRgba(items[9].toUInt(0,16)) );
 		
 		if(HasColor2() && items.size()>10)
-			SetColor2( items[10].toUInt(0,16) );
+			SetColor2( QColor::fromRgba(items[10].toUInt(0,16)) );
 
 		if(items.size() > 11)
-			SetTextColor( items[11].toUInt(0,16) );
+			SetTextColor( QColor::fromRgba(items[11].toUInt(0,16)) );
 		
 		if(HasTextColor2() && items.size()>12)
-			SetTextColor2( items[12].toUInt(0,16) );
+			SetTextColor2( QColor::fromRgba(items[12].toUInt(0,16)) );
 
 		if(items.size() > 13)
 			SetMin( items[13] );

@@ -962,7 +962,7 @@ void EditPanel::onColorClicked(bool /*checked*/)
 {
 	QColor color;
 	GetColor(color);
-	color = QColorDialog::getColor(color, this, tr("Color"));
+	color = QColorDialog::getColor(color, this, tr("Color"), QColorDialog::ShowAlphaChannel);
 	if( color.isValid() )
 	{
 		SetColor(color);
@@ -976,7 +976,7 @@ void EditPanel::onColor2Clicked(bool /*checked*/)
 {
 	QColor color2;
 	GetColor2(color2);
-	color2 = QColorDialog::getColor(color2, this, tr("Color 2"));
+	color2 = QColorDialog::getColor(color2, this, tr("Color 2"), QColorDialog::ShowAlphaChannel);
 	if( color2.isValid() )
 	{
 		SetColor2(color2);
@@ -990,7 +990,7 @@ void EditPanel::onTextColorClicked(bool /*checked*/)
 {
 	QColor textColor;
 	GetTextColor(textColor);
-	textColor = QColorDialog::getColor(textColor, this, tr("Text Color"));
+	textColor = QColorDialog::getColor(textColor, this, tr("Text Color"), QColorDialog::ShowAlphaChannel);
 	if( textColor.isValid() )
 	{
 		SetTextColor(textColor);
@@ -1004,7 +1004,7 @@ void EditPanel::onTextColor2Clicked(bool /*checked*/)
 {
 	QColor textColor2;
 	GetTextColor2(textColor2);
-	textColor2 = QColorDialog::getColor(textColor2, this, tr("Text Color 2"));
+	textColor2 = QColorDialog::getColor(textColor2, this, tr("Text Color 2"), QColorDialog::ShowAlphaChannel);
 	if( textColor2.isValid() )
 	{
 		SetTextColor2(textColor2);

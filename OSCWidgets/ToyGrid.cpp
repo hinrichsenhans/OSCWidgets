@@ -24,12 +24,6 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define QUICK_GRID_BUTTON_SIZE	24
-#define QUICK_GRID_WIDTH		10
-#define QUICK_GRID_HEIGHT		10
-
-////////////////////////////////////////////////////////////////////////////////
-
 GridSizeButton::GridSizeButton(int col, int row, QWidget *parent)
 	: FadeButton(parent)
 	, m_Col(col)
@@ -55,8 +49,10 @@ void GridSizeButton::StartHover()
 
 ////////////////////////////////////////////////////////////////////////////////
 
-GridSizeMenu::GridSizeMenu(const QIcon &icon, const QString &title, QWidget* parent/* =0 */)
+GridSizeMenu::GridSizeMenu(size_t Id, const QSize &gridSize, const QIcon &icon, const QString &title, QWidget* parent/* =0 */)
 	: QMenu(title, parent)
+	, m_Id(Id)
+	, m_GridSize(gridSize)
 {
 	setIcon(icon);
 
@@ -68,13 +64,13 @@ GridSizeMenu::GridSizeMenu(const QIcon &icon, const QString &title, QWidget* par
 	m_Label->setGeometry(0, 0, sizeHint().width(), m_Label->height());
 	y += m_Label->height();
 
-	m_Buttons = new GridSizeButton**[QUICK_GRID_WIDTH];
-	for(int col=0; col<QUICK_GRID_WIDTH; col++)
-		m_Buttons[col] = new GridSizeButton*[QUICK_GRID_HEIGHT];
+	m_Buttons = new GridSizeButton**[ gridSize.width() ];
+	for(int col=0; col<gridSize.width(); col++)
+		m_Buttons[col] = new GridSizeButton*[ gridSize.height() ];
 
-	for(int row=0; row<QUICK_GRID_HEIGHT; row++)
+	for(int row=0; row<gridSize.height(); row++)
 	{
-		for(int col=0; col<QUICK_GRID_WIDTH; col++)
+		for(int col=0; col<gridSize.width(); col++)
 		{
 			GridSizeButton *button = new GridSizeButton(col, row, this);
 			connect(button, SIGNAL(hoveredGridSize(int,int)), this, SLOT(onHovered(int,int)));
@@ -100,9 +96,9 @@ void GridSizeMenu::SetHover(int hoverCol, int hoverRow)
 		hoverRow = 0;
 
 	QPalette pal( m_Buttons[0][0]->palette() );
-	for(int row=0; row<QUICK_GRID_HEIGHT; row++)
+	for(int row=0; row<m_GridSize.height(); row++)
 	{
-		for(int col=0; col<QUICK_GRID_WIDTH; col++)
+		for(int col=0; col<m_GridSize.width(); col++)
 		{
 			bool highlight = (col<=hoverCol && row<=hoverRow);
 			pal.setColor(QPalette::Button, highlight ? QColor(0,85,127) : QColor(60,60,60));
@@ -122,7 +118,7 @@ void GridSizeMenu::SetHover(int hoverCol, int hoverRow)
 
 QSize GridSizeMenu::sizeHint() const
 {
-	return QSize(QUICK_GRID_WIDTH*QUICK_GRID_BUTTON_SIZE, m_Label->height() + QUICK_GRID_HEIGHT*QUICK_GRID_BUTTON_SIZE);
+	return QSize(m_GridSize.width()*QUICK_GRID_BUTTON_SIZE, m_Label->height() + m_GridSize.height()*QUICK_GRID_BUTTON_SIZE);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -136,7 +132,7 @@ void GridSizeMenu::onHovered(int col, int row)
 
 void GridSizeMenu::onClicked(int col, int row)
 {
-	emit gridResized( QSize(col+1,row+1) );
+	emit gridResized(m_Id, QSize(col+1,row+1));
 	emit triggered(0);
 }
 
@@ -205,7 +201,11 @@ void ToyGrid::UpdateMode()
 		case ToyWidget::MODE_EDIT:
 			{
 				m_EditPanel->show();
-				m_EditPanel->move(frameGeometry().topRight() + QPoint(2,0));
+				QWidget *pParent = parentWidget();
+				if( pParent )
+					m_EditPanel->move( mapToGlobal(QPoint(width(),0)) );
+				else
+					m_EditPanel->move(frameGeometry().topRight() + QPoint(1,0));
 				ClipToScreen( *m_EditPanel );
 			}
 			break;
@@ -279,7 +279,8 @@ void ToyGrid::SetGridSize(const QSize &gridSize)
 
 void ToyGrid::AutoSize(const QSize &widgetSize)
 {
-	resize(m_GridSize.width()*widgetSize.width() + MARGIN2, m_GridSize.height()*widgetSize.height() + MARGIN2);
+	resize(	contentsMargins().left() + m_GridSize.width()*widgetSize.width() + contentsMargins().right(),
+			contentsMargins().top() + m_GridSize.height()*widgetSize.height() + contentsMargins().bottom() );
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -371,6 +372,18 @@ void ToyGrid::UpdateColor()
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void ToyGrid::SetColor2(const QColor& /*color2*/)
+{
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void ToyGrid::SetTextColor(const QColor& /*textColor*/)
+{
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void ToyGrid::UpdateLayout()
 {
 	UpdateLayoutForRect( rect() );
@@ -382,10 +395,10 @@ void ToyGrid::UpdateLayoutForRect(const QRect &r)
 {
 	if( !m_GridSize.isEmpty() )
 	{
-		int w = (r.width() - MARGIN2)/m_GridSize.width();
-		int h = (r.height() - MARGIN2)/m_GridSize.height();
-		int x = (r.x() + MARGIN);
-		int y = (r.y() + MARGIN);
+		int w = (r.width() - contentsMargins().left() - contentsMargins().right())/m_GridSize.width();
+		int h = (r.height() - contentsMargins().top() - contentsMargins().bottom())/m_GridSize.height();
+		int x = (r.x() + contentsMargins().left());
+		int y = (r.y() + contentsMargins().top());
 		int col = 0;
 		for(WIDGET_LIST::const_iterator i=m_List.begin(); i!=m_List.end(); i++)
 		{
@@ -393,7 +406,7 @@ void ToyGrid::UpdateLayoutForRect(const QRect &r)
 			if(++col >= m_GridSize.width())
 			{
 				col = 0;
-				x = (r.x() + MARGIN);
+				x = (r.x() + contentsMargins().left());
 				y += h;
 			}
 			else
@@ -567,9 +580,24 @@ void ToyGrid::EditWidget(ToyWidget *widget, bool toggle)
 		m_EditPanel->SetBPM( QString() );
 		m_EditPanel->SetBPMEnabled(false);
 		m_EditPanel->SetColor(m_Color);
-		m_EditPanel->SetColor2Enabled(false);
-		m_EditPanel->SetTextColor( palette().color(QPalette::Disabled,QPalette::ButtonText) );
-		m_EditPanel->SetTextColorEnabled(false);
+		if( HasColor2() )
+		{
+			m_EditPanel->SetColor2( GetColor2() );
+			m_EditPanel->SetColor2Enabled(true);
+		}
+		else
+			m_EditPanel->SetColor2Enabled(false);
+		if( HasTextColor() )
+		{
+			m_EditPanel->SetTextColor( GetTextColor() );
+			m_EditPanel->SetTextColor2( GetTextColor() );
+			m_EditPanel->SetTextColorEnabled(true);
+		}
+		else
+		{
+			m_EditPanel->SetTextColor( palette().color(QPalette::Disabled,QPalette::ButtonText) );
+			m_EditPanel->SetTextColorEnabled(false);
+		}
 		m_EditPanel->SetTextColor2Enabled(false);
 		m_EditPanel->SetHidden(false);
 		m_EditPanel->SetHiddenEnabled(false);
@@ -679,7 +707,7 @@ bool ToyGrid::Load(EosLog &log, const QString &path, QStringList &lines, int &in
 			}
 			
 			if(items.size() > 11)
-				SetColor( items[11].toUInt(0,16) );
+				SetColor( QColor::fromRgba(items[11].toUInt(0,16)) );
 			
 			if(items.size() > 12)
 				SetSendOnConnect(items[12].toInt() != 0);
@@ -692,32 +720,37 @@ bool ToyGrid::Load(EosLog &log, const QString &path, QStringList &lines, int &in
 					m_List[widgetIndex]->Load(log, path, lines, index);
 			}
 			
-//			Qt::WindowStates ws = static_cast<Qt::WindowStates>( items[5].toInt() );
-			bool windowVisible = (items[6].toInt() != 0);
-//			if( ws.testFlag(Qt::WindowMinimized) )
-//			{
-//				if( ws.testFlag(Qt::WindowMaximized) )
-//					showMaximized();
-//				showMinimized();
-//				windowVisible = false;
-//			}
-//			else if( ws.testFlag(Qt::WindowMaximized) )
-//			{
-//				showMaximized();
-//				if( !windowVisible )
-//					close();
-//			}
-//			else
+			if(parentWidget() == 0)
 			{
-				ClipToScreen( *this );
-				if( windowVisible )
+//				Qt::WindowStates ws = static_cast<Qt::WindowStates>( items[5].toInt() );
+				bool windowVisible = (items[6].toInt() != 0);
+//				if( ws.testFlag(Qt::WindowMinimized) )
+//				{
+//					if( ws.testFlag(Qt::WindowMaximized) )
+//						showMaximized();
+//					showMinimized();
+//					windowVisible = false;
+//				}
+//				else if( ws.testFlag(Qt::WindowMaximized) )
+//				{
+//					showMaximized();
+//					if( !windowVisible )
+//						close();
+//				}
+//				else
 				{
-					showNormal();
-					raise();
+					ClipToScreen( *this );
+					if( windowVisible )
+					{
+						showNormal();
+						raise();
+					}
+					else
+						close();
 				}
-				else
-					close();
 			}
+			else
+				show();
 		}
 		
 		m_Loading = false;
@@ -735,7 +768,21 @@ bool ToyGrid::Load(EosLog &log, const QString &path, QStringList &lines, int &in
 void ToyGrid::ClearLabels()
 {
 	for(WIDGET_LIST::const_iterator i=m_List.begin(); i!=m_List.end(); i++)
-		(*i)->SetLabel( QString() );
+		(*i)->ClearLabel();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+Toy* ToyGrid::AddToy(EnumToyType /*type*/, const QSize& /*gridSize*/, const QPoint& /*pos*/)
+{
+	return 0;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void ToyGrid::GetDefaultGridSize(QSize &gridSize) const
+{
+	gridSize = QSize(1, 1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -750,26 +797,58 @@ void ToyGrid::resizeEvent(QResizeEvent *event)
 
 void ToyGrid::contextMenuEvent(QContextMenuEvent *event)
 {
-	QString name;	
+	QString name;
+	GetName(name);
 	
 	QMenu menu(this);
 	
-	m_EditWidgetIndex = ToyWidgetIndexAt( event->pos() );
-	if(m_EditWidgetIndex < m_List.size())
+	bool hasLayoutMode = (parentWidget()!=0 || m_Type==TOY_WINDOW);
+	
+	if(m_Type == TOY_WINDOW)
 	{
-		const ToyWidget *toyWidget = m_List[m_EditWidgetIndex];
-		name = toyWidget->GetText();
-		if( name.isEmpty() )
-			Toy::GetDefaultPathName(m_Type, name);
-		menu.addAction(QIcon(":/assets/images/MenuIconEdit.png"), tr("Edit %1...").arg(name), this, SLOT(onEditToyWidget()));
+		QMenu *addMenu = menu.addMenu(QIcon(":/assets/images/MenuIconAdd.png"), tr("Add..."));
+		if( addMenu )
+		{
+			QString str;
+			for(size_t i=0; i<Toy::TOY_COUNT; i++)
+			{
+				if(i != TOY_WINDOW)
+				{
+					EnumToyType toyType = static_cast<Toy::EnumToyType>(i);
+					Toy::GetName(toyType, str);
+					GridSizeMenu *gridSizeMenu = new GridSizeMenu(i, QSize(QUICK_GRID_WIDTH,QUICK_GRID_HEIGHT), QIcon(), str);
+					connect(gridSizeMenu, SIGNAL(gridResized(size_t,const QSize&)), this, SLOT(onToyAdded(size_t,const QSize&)));
+					addMenu->addMenu(gridSizeMenu);
+				}
+			}
+		}
+		
+		GridSizeMenu *gridSizeMenu = new GridSizeMenu(0, QSize(QUICK_GRID_TABS,1), QIcon(":/assets/images/MenuIconGrid.png"), tr("Tabs"));
+		connect(gridSizeMenu, SIGNAL(gridResized(size_t,const QSize&)), this, SLOT(onGridResized(size_t,const QSize&)));
+		menu.addMenu(gridSizeMenu);
+	}
+	
+	if(m_Type != TOY_WINDOW)
+	{
+		m_EditWidgetIndex = ToyWidgetIndexAt( event->pos() );
+		if(m_EditWidgetIndex < m_List.size())
+		{
+			const ToyWidget *toyWidget = m_List[m_EditWidgetIndex];
+			name = toyWidget->GetText();
+			if( name.isEmpty() )
+				Toy::GetDefaultPathName(m_Type, name);
+			menu.addAction(QIcon(":/assets/images/MenuIconEdit.png"), tr("Edit %1...").arg(name), this, SLOT(onEditToyWidget()));
+		}
+
+		GridSizeMenu *gridSizeMenu = new GridSizeMenu(0, QSize(QUICK_GRID_WIDTH,QUICK_GRID_HEIGHT), QIcon(":/assets/images/MenuIconGrid.png"), tr("Grid"));
+		connect(gridSizeMenu, SIGNAL(gridResized(size_t,const QSize&)), this, SLOT(onGridResized(size_t,const QSize&)));
+		menu.addMenu(gridSizeMenu);
 	}
 
-	GridSizeMenu *gridSizeMenu = new GridSizeMenu(QIcon(":/assets/images/MenuIconGrid.png"), tr("Grid"));
-	connect(gridSizeMenu, SIGNAL(gridResized(const QSize&)), this, SLOT(onGridResized(const QSize&)));
-	menu.addMenu(gridSizeMenu);
-
-	GetName(name);
-	menu.addAction(QIcon(":/assets/images/MenuIconSettings.png"), tr("%1 Settings...").arg(name), this, SLOT(onEdit()));
+	if( hasLayoutMode )
+		menu.addAction(QIcon(":/assets/images/MenuIconSettings.png"), tr("Layout Mode..."), this, SLOT(onLayoutMode()));
+	else
+		menu.addAction(QIcon(":/assets/images/MenuIconSettings.png"), tr("%1 Settings...").arg(name), this, SLOT(onEdit()));
 
 	if(m_Mode == ToyWidget::MODE_EDIT)
 		menu.addAction(QIcon(":/assets/images/MenuIconCheck.png"), tr("Done Editing"), this, SLOT(onDone()));
@@ -785,6 +864,7 @@ void ToyGrid::contextMenuEvent(QContextMenuEvent *event)
 	m_pContextMenu = &menu;
     menu.exec( event->globalPos() );
 	m_pContextMenu = 0;
+	event->accept();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -809,6 +889,13 @@ void ToyGrid::onEditToyWidget()
 {
 	SetMode(ToyWidget::MODE_EDIT);
 	EditWidget((m_EditWidgetIndex<m_List.size()) ? m_List[m_EditWidgetIndex] : 0, /*toggle*/false);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void ToyGrid::onLayoutMode()
+{
+	emit layoutModeSelected();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -973,6 +1060,18 @@ void ToyGrid::onWidgetEdited(ToyWidget *widget)
 		QColor color;
 		m_EditPanel->GetColor(color);
 		SetColor(color);
+		
+		if( HasColor2() )
+		{
+			m_EditPanel->GetColor2(color);
+			SetColor2(color);
+		}
+		
+		if( HasTextColor() )
+		{
+			m_EditPanel->GetTextColor(color);
+			SetTextColor(color);
+		}
 	}
 
 	emit changed();
@@ -991,7 +1090,7 @@ void ToyGrid::onDone()
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void ToyGrid::onGridResized(const QSize &size)
+void ToyGrid::onGridResized(size_t /*Id*/, const QSize &size)
 {
 	if(m_GridSize != size)
 	{
@@ -999,6 +1098,27 @@ void ToyGrid::onGridResized(const QSize &size)
 		emit changed();
 	}
 
+	if( m_pContextMenu )
+		m_pContextMenu->close();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void ToyGrid::onToyAdded(size_t toyType, const QSize &gridSize)
+{
+	if(m_Mode != ToyWidget::MODE_EDIT)
+	{
+		SetMode(ToyWidget::MODE_EDIT);
+		EditWidget(0, /*toggle*/false);
+	}
+	
+	QPoint pos;
+	
+	if( m_pContextMenu )
+		pos = m_pContextMenu->mapToGlobal( QPoint(0,0) );
+	
+	AddToy(static_cast<Toy::EnumToyType>(toyType), gridSize, pos);
+	
 	if( m_pContextMenu )
 		m_pContextMenu->close();
 }

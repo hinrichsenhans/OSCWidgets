@@ -221,6 +221,13 @@ void FadeButton::Release(bool user/* =true */)
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void FadeButton::RenderBackground(QPainter &painter, QRectF &r)
+{
+	painter.drawRoundedRect(r, ROUNDED, ROUNDED);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void FadeButton::resizeEvent(QResizeEvent *event)
 {
 	AutoSizeFont();
@@ -258,7 +265,7 @@ void FadeButton::paintEvent(QPaintEvent* /*event*/)
 		painter.setBrush( palette().color(QPalette::Button) );
 
 	painter.setPen(Qt::NoPen);
-	painter.drawRoundedRect(r, ROUNDED, ROUNDED);
+	RenderBackground(painter, r);
 
 	sImage &img = m_Images[m_ImageIndex];
 	if( !img.pixmap.isNull() )

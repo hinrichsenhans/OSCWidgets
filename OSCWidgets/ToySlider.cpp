@@ -444,7 +444,6 @@ void ToySliderWidget::onPercentChanged(float /*percent*/)
 ToySliderGrid::ToySliderGrid(Client *pClient, QWidget *parent, Qt::WindowFlags flags)
 	: ToyGrid(TOY_SLIDER_GRID, pClient, parent, flags)
 {
-	SetGridSize( QSize(5,1) );
 }
 
 ////////////////////////////////////////////////////////////////////////////////

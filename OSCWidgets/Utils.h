@@ -47,6 +47,8 @@ public:
 	static void MakeContrastingColor(float percent, QColor &color);
 	static void MakeBrighterColor(float percent, QColor &color);
 	static void MakeDarkerColor(float percent, QColor &color);
+	static void Snap(int snap, int &value);
+	static void Snap(int snap, QPoint &point);
 
 #ifdef WIN32
 	typedef BOOL (WINAPI *FuncRegisterTouchWindow)(HWND hWnd, ULONG ulFlags);

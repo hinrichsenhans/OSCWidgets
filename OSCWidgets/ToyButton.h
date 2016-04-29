@@ -86,6 +86,8 @@ class ToyButtonGrid
 public:
 	ToyButtonGrid(Client *pClient, QWidget *parent, Qt::WindowFlags flags);
 	
+	virtual void GetDefaultGridSize(QSize &gridSize) const {gridSize = QSize(5,1);}
+	
 private slots:
 	void onPressed(ToyButtonWidget*);
 	void onReleased(ToyButtonWidget*);

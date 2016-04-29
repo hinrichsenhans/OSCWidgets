@@ -38,6 +38,13 @@ class EditPanel;
 
 ////////////////////////////////////////////////////////////////////////////////
 
+#define QUICK_GRID_BUTTON_SIZE	24
+#define QUICK_GRID_WIDTH		10
+#define QUICK_GRID_HEIGHT		10
+#define QUICK_GRID_TABS			10
+
+////////////////////////////////////////////////////////////////////////////////
+
 class GridSizeButton
 	: public FadeButton
 {
@@ -68,18 +75,20 @@ class GridSizeMenu
 	Q_OBJECT
 
 public:
-	GridSizeMenu(const QIcon &Icon, const QString &title, QWidget *parent=0);
+	GridSizeMenu(size_t Id, const QSize &gridSize, const QIcon &Icon, const QString &title, QWidget *parent=0);
 
 	QSize sizeHint() const;
 
 signals:
-	void gridResized(const QSize &size);
+	void gridResized(size_t Id, const QSize &size);
 
 private slots:
 	void onHovered(int col, int row);
 	void onClicked(int col, int row);
 
 protected:
+	size_t			m_Id;
+	QSize			m_GridSize;
 	QLabel			*m_Label;
 	GridSizeButton	***m_Buttons;
 	void SetHover(int hoverCol, int hoverRow);
@@ -109,6 +118,12 @@ public:
 	virtual void SetImagePath(const QString &imagePath);
 	virtual const QColor& GetColor() const {return m_Color;}
 	virtual void SetColor(const QColor &color);
+	virtual bool HasColor2() const {return false;}
+	virtual const QColor& GetColor2() const {return m_Color;}
+	virtual void SetColor2(const QColor &color2);
+	virtual bool HasTextColor() const {return false;}
+	virtual const QColor& GetTextColor() const {return m_Color;}
+	virtual void SetTextColor(const QColor &textColor);
 	virtual bool GetSendOnConnect() const {return m_SendOnConnect;}
 	virtual void SetSendOnConnect(bool b) {m_SendOnConnect = b;}
 	virtual const ToyWidget* ToyWidgetAt(const QPoint &pos) const;
@@ -118,19 +133,28 @@ public:
 	virtual bool Load(EosLog &log, const QString &path, QStringList &lines, int &index);
 	virtual void GetName(QString &name) const;
 	virtual void ClearLabels();
+	virtual Toy* AddToy(EnumToyType type, const QSize &gridSize, const QPoint &pos);
+	virtual void GetDefaultGridSize(QSize &gridSize) const;
+	
+signals:
+	void layoutModeSelected();
 	
 private slots:
 	void onEdit();	
 	void onEditToyWidget();
+	void onLayoutMode();
 	void onDelete();
 	void onToggleMainWindow();
 	void onWidgetEdited(ToyWidget *widget);
 	void onEdited();
 	void onDone();
-	void onGridResized(const QSize &size);
+	void onGridResized(size_t Id, const QSize &size);
+	void onToyAdded(size_t toyType, const QSize &gridSize);
 	void onClearLabels();
 	
 protected:
+	typedef std::map<QAction*,EnumToyType>	TOY_TYPE_ACTIONS;
+	
 	ToyWidget::EnumMode	m_Mode;
 	QSize				m_GridSize;
 	WIDGET_LIST			m_List;
@@ -144,7 +168,7 @@ protected:
 	QMenu				*m_pContextMenu;
 	bool				m_Loading;
 	
-	virtual ToyWidget* CreateWidget() = 0;
+	virtual ToyWidget* CreateWidget() {return 0;}
 	virtual QSize GetDefaultWidgetSize() const {return QSize(80,80);}
 	virtual void UpdateMode();
 	virtual void UpdateLayout();

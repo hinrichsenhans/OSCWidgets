@@ -139,6 +139,7 @@ class ToyPedalGrid
 public:
 	ToyPedalGrid(Client *pClient, QWidget *parent, Qt::WindowFlags flags);
 
+	virtual void GetDefaultGridSize(QSize &gridSize) const {gridSize = QSize(5,1);}
 	virtual void StartTimer();
 	virtual void StopTimer();
 	

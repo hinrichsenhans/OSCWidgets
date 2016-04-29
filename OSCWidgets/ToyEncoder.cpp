@@ -412,7 +412,6 @@ void ToyEncoderWidget::onTick(float radians)
 ToyEncoderGrid::ToyEncoderGrid(Client *pClient, QWidget *parent, Qt::WindowFlags flags)
 	: ToyGrid(TOY_ENCODER_GRID, pClient, parent, flags)
 {
-	SetGridSize( QSize(4,1) );
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -83,6 +83,7 @@ class ToyCmdGrid
 public:
 	ToyCmdGrid(Client *pClient, QWidget *parent, Qt::WindowFlags flags);
 	
+	virtual void GetDefaultGridSize(QSize &gridSize) const {gridSize = QSize(1,6);}
 	virtual void SetSendOnConnect(bool b);
 	virtual void Connected();
 	virtual void SendAll();

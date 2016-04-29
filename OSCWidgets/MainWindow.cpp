@@ -22,11 +22,12 @@
 #include "SettingsPanel.h"
 #include "LogWidget.h"
 #include "Utils.h"
+#include "EosPlatform.h"
 #include <time.h>
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define APP_VERSION	"0.6"
+#define APP_VERSION	"0.7"
 
 #define MIN_OPACITY 10
 
@@ -184,6 +185,8 @@ MainWindow::MainWindow(QWidget* parent/*=0*/, Qt::WindowFlags f/*=0*/)
 	, m_ToyTreeToyIndex(0)
 	, m_ToyTreeType(Toy::TOY_INVALID)
 	, m_CloseAllowed(0)
+	, m_Platform(0)
+	, m_SystemIdleAllowed(true)
 {
 	Utils::BlockFakeMouseEvents(true);
 
@@ -305,6 +308,13 @@ MainWindow::~MainWindow()
 	}
 
 	Utils::BlockFakeMouseEvents(false);
+	
+	if( m_Platform )
+	{
+		m_Platform->Shutdown();
+		delete m_Platform;
+		m_Platform = 0;
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -794,6 +804,8 @@ void MainWindow::PopulateToyTree()
 	const Toys::TOY_LIST &toys = m_Toys->GetList();
 	m_ToyTree->setHeaderLabel( tr("Widgets // %1").arg(toys.size()) );
 	m_ToyTree->setAlternatingRowColors(true);
+	
+	bool hasToys = false;
 
 	QIcon icon;
 	QString str;
@@ -817,6 +829,7 @@ void MainWindow::PopulateToyTree()
 				unsigned int toyIndex = (j - toys.begin());
 				child->setData(TOY_TREE_COL_ITEM, TOY_TREE_ROLE_TOY_INDEX, toyIndex);
 				item->addChild(child);
+				hasToys = true;
 			}
 		}
 		
@@ -824,6 +837,8 @@ void MainWindow::PopulateToyTree()
 		item->setText(0, str);
 		m_ToyTree->addTopLevelItem(item);
 	}
+	
+	SetSystemIdleAllowed( !hasToys );
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1316,6 +1331,72 @@ bool MainWindow::ToyClient_Send(bool local, char *data, size_t size)
 	}
 	
 	return false;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void MainWindow::ToyClient_ResourceRelativePathToAbsolute(QString &path)
+{
+	Toy::ResourceRelativePathToAbsolute(&m_Log, m_FilePath,	path);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void MainWindow::SetSystemIdleAllowed(bool b)
+{
+	if(m_SystemIdleAllowed != b)
+	{
+		m_SystemIdleAllowed = b;
+		
+		if( m_SystemIdleAllowed )
+		{
+			if( m_Platform )
+			{
+				std::string error;
+				if( m_Platform->SetSystemIdleAllowed(true,"widgets stopped",error) )
+				{
+					m_Log.AddInfo("widgets stopped, system idle allowed");
+				}
+				else
+				{
+					error.insert(0, "failed to allow system idle, ");
+					m_Log.AddDebug(error);
+				}
+			}
+		}
+		else
+		{
+			if(m_Platform == 0)
+			{
+				m_Platform = EosPlatform::Create();
+				
+				if( m_Platform )
+				{
+					std::string error;
+					if( !m_Platform->Initialize(error) )
+					{
+						m_Log.AddError("platform initialization failed");
+						m_Platform->Shutdown();
+						m_Platform = 0;
+					}
+				}
+			}
+			
+			if( m_Platform )
+			{
+				std::string error;
+				if( m_Platform->SetSystemIdleAllowed(false,"widgets started",error) )
+				{
+					m_Log.AddInfo("widgets started, system idle disabled");
+				}
+				else
+				{
+					error.insert(0, "failed to disable system idle, ");
+					m_Log.AddDebug(error);
+				}
+			}
+		}
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
