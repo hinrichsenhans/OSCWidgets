@@ -135,10 +135,13 @@ void ButtonRow::AddWidget(QWidget *w)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-EditPanel::EditPanel(QWidget *parent)
+EditPanel::EditPanel(EditPanelClient &client, QWidget *parent)
 	: QWidget(parent, Qt::Window)
+	, m_pClient(&client)
 	, m_IgnoreEdits(0)
 {
+	setAttribute(Qt::WA_DeleteOnClose);
+
 	QGridLayout *layout = new QGridLayout(this);
 	
 	int row = 0;
@@ -289,6 +292,14 @@ EditPanel::EditPanel(QWidget *parent)
 	m_Help->setWordWrap(true);
 	m_Help->setAlignment(Qt::AlignTop|Qt::AlignLeft);
 	groupLayout->addWidget(m_Help, 0, 0);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+EditPanel::~EditPanel()
+{
+	if( m_pClient )
+		m_pClient->EditPanelClient_Deleted(this);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

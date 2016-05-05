@@ -34,7 +34,9 @@
 #include "FadeButton.h"
 #endif
 
-class EditPanel;
+#ifndef EDIT_PANEL_H
+#include "EditPanel.h"
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -98,6 +100,7 @@ protected:
 
 class ToyGrid
 	: public Toy
+	, private EditPanel::EditPanelClient
 {
 	Q_OBJECT
 	
@@ -151,6 +154,9 @@ private slots:
 	void onGridResized(size_t Id, const QSize &size);
 	void onToyAdded(size_t toyType, const QSize &gridSize);
 	void onClearLabels();
+
+private:
+	virtual void EditPanelClient_Deleted(EditPanel *editPanel);
 	
 protected:
 	typedef std::map<QAction*,EnumToyType>	TOY_TYPE_ACTIONS;
@@ -179,6 +185,8 @@ protected:
 	virtual void ApplyDefaultSettings(ToyWidget *widget, size_t index);
 	virtual void EditWidget(ToyWidget *widget, bool toggle);
 	virtual void AutoSize(const QSize &widgetSize);
+	virtual void CreateEditPanel();
+	virtual void CloseEditPanel();
 	virtual void resizeEvent(QResizeEvent *event);
 	virtual void contextMenuEvent(QContextMenuEvent *event);
 	virtual void closeEvent(QCloseEvent *event);

@@ -77,7 +77,14 @@ class EditPanel
 	Q_OBJECT
 	
 public:
-	EditPanel(QWidget *parent);
+	class EditPanelClient
+	{
+	public:
+		virtual void EditPanelClient_Deleted(EditPanel *editPanel) = 0;
+	};
+
+	EditPanel(EditPanelClient &client, QWidget *parent);
+	virtual ~EditPanel();
 	
 	virtual int GetCols() const;
 	virtual void SetCols(int cols);
@@ -155,8 +162,9 @@ private slots:
 	void onDoneClicked(bool checked);
 	
 protected:
+	EditPanelClient	*m_pClient;
 	QLabel			*m_GridLabel;
-	QSpinBox		*m_Cols;	
+	QSpinBox		*m_Cols;
 	QSpinBox		*m_Rows;
 	QLineEdit		*m_Text;
 	FadeButton		*m_ImagePathButton;

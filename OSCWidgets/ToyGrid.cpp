@@ -19,7 +19,6 @@
 // THE SOFTWARE.
 
 #include "ToyGrid.h"
-#include "EditPanel.h"
 #include "Utils.h"
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -146,12 +145,8 @@ ToyGrid::ToyGrid(EnumToyType type, Client *pClient, QWidget *parent, Qt::WindowF
 	, m_IgnoreEdits(0)
 	, m_pContextMenu(0)
 	, m_Loading(false)
+	, m_EditPanel(0)
 {
-	m_EditPanel = new EditPanel(this);
-	m_EditPanel->hide();
-	connect(m_EditPanel, SIGNAL(edited()), this, SLOT(onEdited()));
-	connect(m_EditPanel, SIGNAL(done()), this, SLOT(onDone()));
-	
 	QString name;
 	Toy::GetName(m_Type, name);
 	SetText(name);
@@ -195,18 +190,23 @@ void ToyGrid::UpdateMode()
 	switch( m_Mode )
 	{
 		case ToyWidget::MODE_DEFAULT:
-			m_EditPanel->hide();
+			CloseEditPanel();
 			break;
 			
 		case ToyWidget::MODE_EDIT:
 			{
-				m_EditPanel->show();
-				QWidget *pParent = parentWidget();
-				if( pParent )
-					m_EditPanel->move( mapToGlobal(QPoint(width(),0)) );
-				else
-					m_EditPanel->move(frameGeometry().topRight() + QPoint(1,0));
-				ClipToScreen( *m_EditPanel );
+				CreateEditPanel();
+
+				if( m_EditPanel )
+				{
+					QWidget *pParent = parentWidget();
+					if( pParent )
+						m_EditPanel->move( mapToGlobal(QPoint(width(),0)) );
+					else
+						m_EditPanel->move(frameGeometry().topRight() + QPoint(1,0));
+					m_EditPanel->show();
+					ClipToScreen( *m_EditPanel );
+				}
 			}
 			break;
 	}
@@ -419,6 +419,9 @@ void ToyGrid::UpdateLayoutForRect(const QRect &r)
 
 void ToyGrid::EditWidget(ToyWidget *widget, bool toggle)
 {
+	if( !m_EditPanel )
+		return;
+
 	++m_IgnoreEdits;
 
 	for(WIDGET_LIST::const_iterator i=m_List.begin(); i!=m_List.end(); i++)
@@ -787,6 +790,36 @@ void ToyGrid::GetDefaultGridSize(QSize &gridSize) const
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void ToyGrid::CreateEditPanel()
+{
+	if( !m_EditPanel )
+	{
+		m_EditPanel = new EditPanel(*this, this);
+		connect(m_EditPanel, SIGNAL(edited()), this, SLOT(onEdited()));
+		connect(m_EditPanel, SIGNAL(done()), this, SLOT(onDone()));
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void ToyGrid::CloseEditPanel()
+{
+	if( m_EditPanel )
+	{
+		m_EditPanel->close();
+		m_EditPanel = 0;
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void ToyGrid::EditPanelClient_Deleted(EditPanel* /*editPanel*/)
+{
+	m_EditPanel = 0;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void ToyGrid::resizeEvent(QResizeEvent *event)
 {
 	Toy::resizeEvent(event);
@@ -872,7 +905,7 @@ void ToyGrid::contextMenuEvent(QContextMenuEvent *event)
 void ToyGrid::closeEvent(QCloseEvent *event)
 {
 	Toy::closeEvent(event);
-	m_EditPanel->close();
+	CloseEditPanel();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -908,7 +941,7 @@ void ToyGrid::onDelete()
 	mb.setIconPixmap( QPixmap(":/assets/images/IconQuestion.png") );
 	if(mb.exec() == QMessageBox::Yes)
 	{
-		m_EditPanel->close();
+		CloseEditPanel();
 		emit closing(this);
 	}
 }
@@ -931,7 +964,7 @@ void ToyGrid::onWidgetEdited(ToyWidget *widget)
 
  void ToyGrid::onEdited()
  {
-	if(m_IgnoreEdits != 0)
+	if(!m_EditPanel || m_IgnoreEdits!=0)
 		return;
 		
 	ToyWidget *widget = 0;
