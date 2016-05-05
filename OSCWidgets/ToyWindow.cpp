@@ -434,14 +434,14 @@ void EditFrame::mouseMoveEvent(QMouseEvent *event)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void EditFrame::mouseReleaseEvent(QMouseEvent *event)
+void EditFrame::mouseReleaseEvent(QMouseEvent* /*event*/)
 {
 	SetMouseDown(false);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void EditFrame::paintEvent(QPaintEvent *event)
+void EditFrame::paintEvent(QPaintEvent* /*event*/)
 {
 	QRect r( rect() );
 	r.adjust(0, 0, -1, -1);
@@ -787,7 +787,7 @@ void ToyWindowTab::resizeEvent(QResizeEvent* /*event*/)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void ToyWindowTab::paintEvent(QPaintEvent *event)
+void ToyWindowTab::paintEvent(QPaintEvent* /*event*/)
 {
 	QPainter painter(this);
 	painter.setRenderHint(QPainter::Antialiasing, false);
@@ -840,7 +840,7 @@ void ToyWindowTab::onEditFramePressed(EditFrame *editFrame, bool clearPrevSelect
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void ToyWindowTab::onEditFrameTranslated(EditFrame *editFrame, const QPoint &delta)
+void ToyWindowTab::onEditFrameTranslated(EditFrame* /*editFrame*/, const QPoint &delta)
 {
 	TranslateSelection(delta, /*snap*/false);
 }
@@ -1036,7 +1036,7 @@ void TabButton::onRenameTextChanged(const QString &text)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void TabButton::onClicked(bool checked)
+void TabButton::onClicked(bool /*checked*/)
 {
 	emit tabSelected(m_Index);
 }
@@ -1651,7 +1651,7 @@ void ToyWindow::onTabSelected(size_t index)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void ToyWindow::onTabChanged(size_t index)
+void ToyWindow::onTabChanged(size_t /*index*/)
 {
 	UpdateLayout();
 }

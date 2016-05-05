@@ -44,6 +44,7 @@ public:
 	};
 	
 	FadeButton(QWidget *parent);
+	FadeButton(bool touchEnabled, QWidget *parent);
 	virtual ~FadeButton();
 
 	virtual const QString& GetLabel() const {return m_Label;}
@@ -60,6 +61,9 @@ private slots:
 	void onReleased();
 	void onClickTimeout();
 	void onHoverTimeout();
+
+private:
+	void Construct(bool touchEnabled);
 	
 protected:
 	struct sImage
@@ -90,6 +94,17 @@ protected:
 	virtual void resizeEvent(QResizeEvent *event);
 	virtual void paintEvent(QPaintEvent *event);
 	virtual bool event(QEvent *event);
+};
+
+////////////////////////////////////////////////////////////////////////////////
+
+class FadeButton_NoTouch
+	: public FadeButton
+{
+public:
+	FadeButton_NoTouch(QWidget *parent)
+		: FadeButton(/*touchEnabled*/false, parent)
+	{}
 };
 
 ////////////////////////////////////////////////////////////////////////////////

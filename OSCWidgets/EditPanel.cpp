@@ -119,7 +119,7 @@ QPushButton* ButtonRow::AddButton(const QString &text)
 
 FadeButton* ButtonRow::AddFadeButton()
 {
-	FadeButton *fadeButton = new FadeButton(this);
+	FadeButton *fadeButton = new FadeButton_NoTouch(this);
 	AddWidget(fadeButton);
 	return fadeButton;
 }

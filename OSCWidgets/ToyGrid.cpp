@@ -25,7 +25,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 GridSizeButton::GridSizeButton(int col, int row, QWidget *parent)
-	: FadeButton(parent)
+	: FadeButton_NoTouch(parent)
 	, m_Col(col)
 	, m_Row(row)
 {
@@ -43,7 +43,7 @@ void GridSizeButton::onClicked(bool /*checked*/)
 
 void GridSizeButton::StartHover()
 {
-	FadeButton::StartHover();
+	FadeButton_NoTouch::StartHover();
 	emit hoveredGridSize(m_Col, m_Row);
 }
 

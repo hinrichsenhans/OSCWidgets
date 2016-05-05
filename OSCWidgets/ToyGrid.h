@@ -46,7 +46,7 @@ class EditPanel;
 ////////////////////////////////////////////////////////////////////////////////
 
 class GridSizeButton
-	: public FadeButton
+	: public FadeButton_NoTouch
 {
 	Q_OBJECT
 

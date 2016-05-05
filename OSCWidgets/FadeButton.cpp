@@ -25,10 +25,34 @@
 
 FadeButton::FadeButton(QWidget *parent)
 	: QPushButton(parent)
-	, m_Click(0)
-	, m_Hover(0)
-	, m_ImageIndex(0)
 {
+	Construct(/*touchEnabled*/true);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+FadeButton::FadeButton(bool touchEnabled, QWidget *parent)
+	: QPushButton(parent)
+{
+	Construct(touchEnabled);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+FadeButton::~FadeButton()
+{
+	for(size_t i=0; i<NUM_IMAGES; i++)
+		SetImagePath(i, QString());
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void FadeButton::Construct(bool touchEnabled)
+{
+	m_Click = 0;
+	m_Hover = 0;
+	m_ImageIndex = 0;
+
 	m_ClickTimer = new QTimer(this);
 	connect(m_ClickTimer, SIGNAL(timeout()), this, SLOT(onClickTimeout()));
 	
@@ -38,16 +62,11 @@ FadeButton::FadeButton(QWidget *parent)
 	connect(this, SIGNAL(pressed()), this, SLOT(onPressed()));
 	connect(this, SIGNAL(released()), this, SLOT(onReleased()));
 	
-	setAttribute(Qt::WA_Hover);
-	Utils::RegisterTouchWidget(*this);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-FadeButton::~FadeButton()
-{
-	for(size_t i=0; i<NUM_IMAGES; i++)
-		SetImagePath(i, QString());
+	if( touchEnabled )
+	{
+		setAttribute(Qt::WA_Hover);
+		Utils::RegisterTouchWidget(*this);
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////

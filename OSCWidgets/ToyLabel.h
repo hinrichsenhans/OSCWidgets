@@ -33,7 +33,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 class FadeLabel
-	: public FadeButton
+	: public FadeButton_NoTouch
 {
 public:
 	FadeLabel(QWidget *parent);

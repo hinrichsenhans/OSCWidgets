@@ -26,7 +26,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 FadeLabel::FadeLabel(QWidget *parent)
-	: FadeButton(parent)
+	: FadeButton_NoTouch(parent)
 {
 }
 
