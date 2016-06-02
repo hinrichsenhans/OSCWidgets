@@ -1,4 +1,5 @@
 #include "ToyWindow.h"
+#include "Toys.h"
 #include "Utils.h"
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1213,7 +1214,7 @@ Toy* ToyWindow::AddToyToTab(size_t tabIndex, EnumToyType type, const QSize &grid
 	
 	if(tabIndex < m_Tabs.size())
 	{
-		ToyWindowTab *tab = m_Tabs[m_TabIndex].widget;
+		ToyWindowTab *tab = m_Tabs[tabIndex].widget;
 		bool clipToBounds = !m_Loading;
 		toy = tab->AddToy(type, gridSize, pos, clipToBounds, m_pClient);
 		if( toy )
@@ -1375,6 +1376,10 @@ bool ToyWindow::Load(EosLog &log, const QString &path, QStringList &lines, int &
 			if(items.size() > 1)
 			{
 				int numFrames = items[1].toInt();
+
+				Toys::TOY_LIST addedToys;
+				addedToys.reserve(numFrames);
+
 				for(int frameIndex=0; frameIndex<numFrames && index<lines.size(); frameIndex++)
 				{
 					Utils::GetItemsFromQuotedString(lines[index], items);
@@ -1385,9 +1390,16 @@ bool ToyWindow::Load(EosLog &log, const QString &path, QStringList &lines, int &
 					{
 						Toy *toy = AddToyToTab(tabIndex, static_cast<Toy::EnumToyType>(n), QSize(1,1), QPoint(0,0));
 						if( toy )
+						{
 							toy->Load(log, path, lines, index);
+							addedToys.push_back(toy);
+						}
 					}
 				}
+
+				// ensure proper z-ordering
+				for(Toys::TOY_LIST::const_iterator i=addedToys.begin(); i!=addedToys.end(); i++)
+					(*i)->raise();
 			}
 		}
 		

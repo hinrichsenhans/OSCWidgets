@@ -61,12 +61,11 @@ void FadeButton::Construct(bool touchEnabled)
 	
 	connect(this, SIGNAL(pressed()), this, SLOT(onPressed()));
 	connect(this, SIGNAL(released()), this, SLOT(onReleased()));
+
+	setAttribute(Qt::WA_Hover);
 	
 	if( touchEnabled )
-	{
-		setAttribute(Qt::WA_Hover);
 		Utils::RegisterTouchWidget(*this);
-	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////

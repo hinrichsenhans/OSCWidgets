@@ -149,22 +149,26 @@ void Toy::SetDefaultWindowIcon(QWidget &w)
 	// NOTE: looks cleaner without window icons on Mac
 
 #ifdef WIN32
-	QIcon icon;
-
-	const int iconSizes[] = {512, 256, 128, 64, 32, 16};
-	const size_t numIcons = sizeof(iconSizes)/sizeof(iconSizes[0]);
-	for(size_t i=0; i<numIcons; i++)
+	static QIcon *sIcon = 0;
+	if( !sIcon )
 	{
-		HICON hIcon = static_cast<HICON>( LoadImage(GetModuleHandle(0),MAKEINTRESOURCE(IDI_ICON1),IMAGE_ICON,iconSizes[i],iconSizes[i],LR_LOADTRANSPARENT) );
-		if( hIcon )
+		sIcon = new QIcon();
+
+		const int iconSizes[] = {512, 256, 128, 64, 32, 16};
+		const size_t numIcons = sizeof(iconSizes)/sizeof(iconSizes[0]);
+		for(size_t i=0; i<numIcons; i++)
 		{
-			icon.addPixmap( QPixmap::fromWinHICON(hIcon) );
-			DestroyIcon(hIcon);
+			HICON hIcon = static_cast<HICON>( LoadImage(GetModuleHandle(0),MAKEINTRESOURCE(IDI_ICON1),IMAGE_ICON,iconSizes[i],iconSizes[i],LR_LOADTRANSPARENT) );
+			if( hIcon )
+			{
+				sIcon->addPixmap( QPixmap::fromWinHICON(hIcon) );
+				DestroyIcon(hIcon);
+			}
 		}
 	}
 
-	if( !icon.isNull() )
-		w.setWindowIcon(icon);
+	if( !sIcon->isNull() )
+		w.setWindowIcon( *sIcon );
 #endif
 }
 

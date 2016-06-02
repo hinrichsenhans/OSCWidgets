@@ -332,11 +332,14 @@ void ToyGrid::SetImagePath(const QString &imagePath)
 
 void ToyGrid::UpdateImagePath()
 {
-	QIcon icon(m_ImagePath);
-	if( icon.isNull() )
-		SetDefaultWindowIcon( *this );
-	else
-		setWindowIcon(icon);
+	if(parentWidget() == 0)
+	{
+		QIcon icon(m_ImagePath);
+		if( icon.isNull() )
+			SetDefaultWindowIcon( *this );
+		else
+			setWindowIcon(icon);
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
