@@ -32,11 +32,10 @@ bool FadeActivity::sFadeTiming::operator==(const sFadeTiming &other) const
 ////////////////////////////////////////////////////////////////////////////////
 
 FadeActivity::FadeActivity(QWidget *parent)
-	: FadeButton(parent)
+	: FadeButton_NoTouch(parent)
 	, m_FadeState(FADE_OFF)
 	, m_FadeElapsed(0)
 {
-	setAttribute(Qt::WA_PaintOnScreen);
 	m_ActivityTimer = new QTimer(this);
 	connect(m_ActivityTimer, SIGNAL(timeout()), this, SLOT(onUpdate()));
 }

@@ -816,6 +816,67 @@ void ToyGrid::CloseEditPanel()
 
 ////////////////////////////////////////////////////////////////////////////////
 
+bool ToyGrid::ConfirmGridResize(QWidget *parent, bool tab, const QSize &beforeSize, const QSize &afterSize)
+{
+	if(beforeSize != afterSize)
+	{
+		// confirmation prompt if shrinking
+		if(afterSize.width()<beforeSize.width() || afterSize.height()<beforeSize.height())
+		{
+			QString text;
+			
+			if(	tab )
+			{
+				text = tr("Reduce tabs from %1 to %2\n\nAre you sure?")
+				.arg( beforeSize.width() )
+				.arg( afterSize.width() );
+			}
+			else
+			{
+				text = tr("Resize grid from (%1 x %2) to (%3 x %4)\n\nAre you sure?")
+				.arg( beforeSize.width() )
+				.arg( beforeSize.height() )
+				.arg( afterSize.width() )
+				.arg( afterSize.height() );
+			}
+			
+			QMessageBox mb(QMessageBox::NoIcon, tr("OSCWidgets"), text, QMessageBox::NoButton, parent);
+			mb.setIconPixmap( QPixmap(":/assets/images/IconQuestion.png") );
+			QPushButton *yesButton = mb.addButton(tr("Yes"), QMessageBox::AcceptRole);
+			mb.addButton(tr("No"), QMessageBox::DestructiveRole);
+			mb.addButton(tr("Cancel"), QMessageBox::RejectRole);
+			
+			mb.exec();
+			
+			if(mb.clickedButton() == yesButton)
+				return true;
+		}
+		else
+		{
+			// expanding, no confirmation required
+			return true;
+		}
+	}
+	
+	return false;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void ToyGrid::HandleGridResize(bool tab, const QSize &size)
+{
+	if( ConfirmGridResize(this,tab,m_GridSize,size) )
+	{
+		SetGridSize(size);
+		emit changed();
+	}
+	
+	if( m_pContextMenu )
+		m_pContextMenu->close();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void ToyGrid::EditPanelClient_Deleted(EditPanel* /*editPanel*/)
 {
 	m_EditPanel = 0;
@@ -860,7 +921,7 @@ void ToyGrid::contextMenuEvent(QContextMenuEvent *event)
 		}
 		
 		GridSizeMenu *gridSizeMenu = new GridSizeMenu(0, QSize(QUICK_GRID_TABS,1), QIcon(":/assets/images/MenuIconGrid.png"), tr("Tabs"));
-		connect(gridSizeMenu, SIGNAL(gridResized(size_t,const QSize&)), this, SLOT(onGridResized(size_t,const QSize&)));
+		connect(gridSizeMenu, SIGNAL(gridResized(size_t,const QSize&)), this, SLOT(onTabResized(size_t,const QSize&)));
 		menu.addMenu(gridSizeMenu);
 	}
 	
@@ -1128,14 +1189,14 @@ void ToyGrid::onDone()
 
 void ToyGrid::onGridResized(size_t /*Id*/, const QSize &size)
 {
-	if(m_GridSize != size)
-	{
-		SetGridSize(size);
-		emit changed();
-	}
+	HandleGridResize(/*tab*/false, size);
+}
 
-	if( m_pContextMenu )
-		m_pContextMenu->close();
+////////////////////////////////////////////////////////////////////////////////
+
+void ToyGrid::onTabResized(size_t /*Id*/, const QSize &size)
+{
+	HandleGridResize(/*tab*/true, size);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

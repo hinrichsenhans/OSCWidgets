@@ -862,9 +862,12 @@ void ToyWindowTab::onEditFrameGridResized(EditFrame *editFrame, const QSize &gri
 	if(frameIndex < m_Frames.size())
 	{
 		const sFrame &frame = m_Frames[frameIndex];
-		frame.toy->SetGridSize(gridSize);
-		ClipFrameToBounds(frameIndex);
-		frame.editFrame->InitEditMode();
+		if( ToyGrid::ConfirmGridResize(this,/*tab*/false,frame.toy->GetGridSize(),gridSize) )
+		{
+			frame.toy->SetGridSize(gridSize);
+			ClipFrameToBounds(frameIndex);
+			frame.editFrame->InitEditMode();
+		}
 	}
 }
 
@@ -1569,6 +1572,11 @@ void ToyWindowTab::keyPressEvent(QKeyEvent *event)
 			case Qt::Key_Right:
 			case Qt::Key_Down:
 				HandleTranslateKey(event);
+				break;
+				
+			case Qt::Key_Delete:
+			case Qt::Key_Backspace:
+				onEditFrameDeleted(/*editFrame*/0);
 				break;
 		}
 	}

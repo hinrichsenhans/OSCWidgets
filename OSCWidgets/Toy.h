@@ -101,6 +101,7 @@ public:
 	virtual void SetTextColor(const QColor &textColor) = 0;
 	virtual void GetName(QString &name) const = 0;
 	virtual void SetGridSize(const QSize &gridSize) = 0;
+	virtual const QSize& GetGridSize() const = 0;
 	virtual void GetDefaultGridSize(QSize &gridSize) const = 0;
 	virtual void ClearLabels() = 0;
 	virtual void StartTimer() {}

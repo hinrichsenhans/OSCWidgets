@@ -139,6 +139,8 @@ public:
 	virtual Toy* AddToy(EnumToyType type, const QSize &gridSize, const QPoint &pos);
 	virtual void GetDefaultGridSize(QSize &gridSize) const;
 	
+	static bool ConfirmGridResize(QWidget *parent, bool tab, const QSize &beforeSize, const QSize &afterSize);
+	
 signals:
 	void layoutModeSelected();
 	
@@ -152,6 +154,7 @@ private slots:
 	void onEdited();
 	void onDone();
 	void onGridResized(size_t Id, const QSize &size);
+	void onTabResized(size_t Id, const QSize &size);
 	void onToyAdded(size_t toyType, const QSize &gridSize);
 	void onClearLabels();
 
@@ -187,6 +190,7 @@ protected:
 	virtual void AutoSize(const QSize &widgetSize);
 	virtual void CreateEditPanel();
 	virtual void CloseEditPanel();
+	virtual void HandleGridResize(bool tab, const QSize &size);
 	virtual void resizeEvent(QResizeEvent *event);
 	virtual void contextMenuEvent(QContextMenuEvent *event);
 	virtual void closeEvent(QCloseEvent *event);
