@@ -477,9 +477,9 @@ void ToySliderGrid::onPercentChanged(ToySliderWidget *slider)
 		}
 			
 		size_t size;
-		char *data = packetWriter.Create(size);
-		if( data )
-			m_pClient->ToyClient_Send(local, data, size);
+		char *packet = packetWriter.Create(size);
+		if( packet )
+			m_pClient->ToyClient_Send(local, packet, size);
 	}
 }
 

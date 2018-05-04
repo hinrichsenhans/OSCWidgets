@@ -525,6 +525,8 @@ bool MainWindow::SaveFile(const QString &path, bool setLastFile)
 {
 	bool success = true;
 
+	QDir().mkpath( QFileInfo(path).absolutePath() );
+
 	QFile f(path);
 	if( f.open(QIODevice::WriteOnly|QIODevice::Truncate|QIODevice::Text) )
 	{
@@ -559,7 +561,7 @@ bool MainWindow::SaveFile(const QString &path, bool setLastFile)
 	
 	if( !success )
 	{
-		QMessageBox mb(QMessageBox::NoIcon, tr("OSCWidgets"), tr("Unable to save file \"%1\"").arg(m_FilePath), QMessageBox::Ok, this);
+		QMessageBox mb(QMessageBox::NoIcon, tr("OSCWidgets"), tr("Unable to save file \"%1\"\n\n%2").arg(path).arg(f.errorString()), QMessageBox::Ok, this);
 		mb.setIconPixmap( QPixmap(":/assets/images/IconWarning.png") );
 		mb.exec();
 	}

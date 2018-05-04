@@ -10,4 +10,5 @@
 *.lastbuildstate
 *.idb
 *.db
+*.opendb
 moc*.cpp
