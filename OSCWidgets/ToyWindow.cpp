@@ -1124,7 +1124,7 @@ void ToyWindow::SetGridSize(const QSize &gridSize)
 		emit changed();
 	}
 	
-	m_GridSize = QSize(m_Tabs.size(), 1);
+	m_GridSize = QSize(static_cast<int>(m_Tabs.size()), 1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

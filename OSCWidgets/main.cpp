@@ -25,6 +25,7 @@
 #include "QtInclude.h"
 #include "MainWindow.h"
 #include "Utils.h"
+#include "EosPlatform.h"
 
 // TODO: image format plugins!
 
@@ -32,9 +33,21 @@
 
 int main(int argc, char* argv[])
 {
-	srand( time(0) );
+	srand( static_cast<unsigned int>(time(0)) );
 
-	EosTimer::Init();	
+    EosTimer::Init();
+    
+    EosPlatform *platform = EosPlatform::Create();
+    if( platform )
+    {
+        std::string error;
+        if( !platform->Initialize(error) )
+        {
+            printf("platform initialization failed\n");
+            delete platform;
+            platform = 0;
+        }
+    }
 
 	QApplication app(argc, argv);
 	
@@ -92,12 +105,15 @@ int main(int argc, char* argv[])
 
 	PixmapCache::Instantiate();
 
-	MainWindow *mainWindow = new MainWindow();
+	MainWindow *mainWindow = new MainWindow(platform);
 	mainWindow->show();
 	int result = app.exec();
 	delete mainWindow;
 
 	PixmapCache::Shutdown();
+    
+    if(platform)
+        delete platform;
 
 	return result;
 }

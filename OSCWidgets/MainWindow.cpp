@@ -175,7 +175,7 @@ void OpacityMenu::onTriggeredWithOpacity(int opacity)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-MainWindow::MainWindow(QWidget* parent/*=0*/, Qt::WindowFlags f/*=0*/)
+MainWindow::MainWindow(EosPlatform *platform, QWidget* parent/*=0*/, Qt::WindowFlags f/*=0*/)
 	: QWidget(parent, f)
 	, m_Settings("ETC", "OSCWidgets")
 	, m_LogDepth(200)
@@ -185,7 +185,7 @@ MainWindow::MainWindow(QWidget* parent/*=0*/, Qt::WindowFlags f/*=0*/)
 	, m_ToyTreeToyIndex(0)
 	, m_ToyTreeType(Toy::TOY_INVALID)
 	, m_CloseAllowed(0)
-	, m_Platform(0)
+	, m_pPlatform(platform)
 	, m_SystemIdleAllowed(true)
 {
 	Utils::BlockFakeMouseEvents(true);
@@ -308,13 +308,6 @@ MainWindow::~MainWindow()
 	}
 
 	Utils::BlockFakeMouseEvents(false);
-	
-	if( m_Platform )
-	{
-		m_Platform->Shutdown();
-		delete m_Platform;
-		m_Platform = 0;
-	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -828,7 +821,7 @@ void MainWindow::PopulateToyTree()
 				MakeToyIcon(*toy, QSize(16,16), icon);
 				child->setIcon(TOY_TREE_COL_ITEM, icon);
 				child->setText(TOY_TREE_COL_ITEM, toy->GetText());
-				unsigned int toyIndex = (j - toys.begin());
+				unsigned int toyIndex = static_cast<unsigned int>(j - toys.begin());
 				child->setData(TOY_TREE_COL_ITEM, TOY_TREE_ROLE_TOY_INDEX, toyIndex);
 				item->addChild(child);
 				hasToys = true;
@@ -1349,55 +1342,36 @@ void MainWindow::SetSystemIdleAllowed(bool b)
 	if(m_SystemIdleAllowed != b)
 	{
 		m_SystemIdleAllowed = b;
-		
-		if( m_SystemIdleAllowed )
-		{
-			if( m_Platform )
-			{
-				std::string error;
-				if( m_Platform->SetSystemIdleAllowed(true,"widgets stopped",error) )
-				{
-					m_Log.AddInfo("widgets stopped, system idle allowed");
-				}
-				else
-				{
-					error.insert(0, "failed to allow system idle, ");
-					m_Log.AddDebug(error);
-				}
-			}
-		}
-		else
-		{
-			if(m_Platform == 0)
-			{
-				m_Platform = EosPlatform::Create();
-				
-				if( m_Platform )
-				{
-					std::string error;
-					if( !m_Platform->Initialize(error) )
-					{
-						m_Log.AddError("platform initialization failed");
-						m_Platform->Shutdown();
-						m_Platform = 0;
-					}
-				}
-			}
-			
-			if( m_Platform )
-			{
-				std::string error;
-				if( m_Platform->SetSystemIdleAllowed(false,"widgets started",error) )
-				{
-					m_Log.AddInfo("widgets started, system idle disabled");
-				}
-				else
-				{
-					error.insert(0, "failed to disable system idle, ");
-					m_Log.AddDebug(error);
-				}
-			}
-		}
+        
+        if(m_pPlatform)
+        {
+            if( m_SystemIdleAllowed )
+            {
+                std::string error;
+                if( m_pPlatform->SetSystemIdleAllowed(true,"widgets stopped",error) )
+                {
+                    m_Log.AddInfo("widgets stopped, system idle allowed");
+                }
+                else
+                {
+                    error.insert(0, "failed to allow system idle, ");
+                    m_Log.AddDebug(error);
+                }
+            }
+            else
+            {
+                std::string error;
+                if( m_pPlatform->SetSystemIdleAllowed(false,"widgets started",error) )
+                {
+                    m_Log.AddInfo("widgets started, system idle disabled");
+                }
+                else
+                {
+                    error.insert(0, "failed to disable system idle, ");
+                    m_Log.AddDebug(error);
+                }
+            }
+        }
 	}
 }
 

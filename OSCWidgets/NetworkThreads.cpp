@@ -130,7 +130,7 @@ void EosUdpOutThread::run()
 				
 				for(PACKET_Q::const_iterator i=q.begin(); i!=q.end(); i++)
 				{
-					if( udpOut->SendPacket(m_PrivateLog,i->data,i->size) )
+					if( udpOut->SendPacket(m_PrivateLog,i->data,static_cast<int>(i->size)) )
 						logParser.PrintPacket(*this, i->data, i->size);
 					delete[] i->data;
 				}

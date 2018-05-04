@@ -183,7 +183,7 @@ void LogWidget::UpdateVScrollBar()
 		{
 			size_t range = (lineCount - linesPerPage);
 			m_VScrollBar->setMinimum(0);
-			m_VScrollBar->setMaximum(range);
+			m_VScrollBar->setMaximum(static_cast<int>(range));
 			m_VScrollBar->setEnabled(true);
 		}
 	}

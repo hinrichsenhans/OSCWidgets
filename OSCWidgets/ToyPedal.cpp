@@ -234,7 +234,7 @@ void FadePedal::paintEvent(QPaintEvent* /*event*/)
 		if( m_Ticks.empty() )
 			m_Points.clear();
 		else
-			m_Points.resize(m_Ticks.size() + 1);	// end point
+			m_Points.resize(static_cast<int>(m_Ticks.size() + 1));	// end point
 	
 		if( !m_Points.empty() )
 		{
@@ -248,7 +248,7 @@ void FadePedal::paintEvent(QPaintEvent* /*event*/)
 			for(size_t i=0; i<m_Ticks.size(); i++)
 			{
 				const sTick &t = m_Ticks[i];
-				QPointF &p = m_Points[i];	// end point
+				QPointF &p = m_Points[static_cast<int>(i)];	// end point
 			
 				float percent = (t.elapsed * toPercent);
 				p.setX(lineX - lineWidth*percent);
