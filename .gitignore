@@ -1,1 +1,13 @@
 *.pro.user
+*.suo
+*.obj
+*.ilk
+*.exe
+*.log
+*.pdb
+*.res
+*.tlog
+*.lastbuildstate
+*.idb
+*.db
+moc*.cpp
