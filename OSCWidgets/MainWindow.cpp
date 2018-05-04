@@ -1,4 +1,4 @@
-// Copyright (c) 2016 Electronic Theatre Controls, Inc., http://www.etcconnect.com
+// Copyright (c) 2018 Electronic Theatre Controls, Inc., http://www.etcconnect.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -1299,20 +1299,20 @@ void MainWindow::onSystemTrayActivated(QSystemTrayIcon::ActivationReason reason)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-bool MainWindow::ToyClient_Send(bool local, char *data, size_t size)
+bool MainWindow::ToyClient_Send(bool local, char *buf, size_t size)
 {
-	if(data && size!=0)
+	if(buf && size!=0)
 	{
 		if( local )
 		{
-			m_Toys->Recv(data, size);
-			delete[] data;
+			m_Toys->Recv(buf, size);
+			delete[] buf;
 			return true;
 		}
 		else
 		{
 			sPacket packet;
-			packet.data = data;
+			packet.data = buf;
 			packet.size = size;
 			
 			if( m_UdpOutThread )
@@ -1326,7 +1326,7 @@ bool MainWindow::ToyClient_Send(bool local, char *data, size_t size)
 					return true;
 			}
 
-			delete[] data;
+			delete[] buf;
 		}
 	}
 	
