@@ -27,8 +27,6 @@
 #include "Utils.h"
 #include "EosPlatform.h"
 
-// TODO: image format plugins!
-
 ////////////////////////////////////////////////////////////////////////////////
 
 int main(int argc, char* argv[])
@@ -50,13 +48,6 @@ int main(int argc, char* argv[])
     }
 
 	QApplication app(argc, argv);
-	
-#ifndef WIN32
-	QDir dir( app.applicationDirPath() );
-	dir.cdUp();
-	dir.cd("Plugins");
-	app.setLibraryPaths( QStringList(dir.canonicalPath()) );
-#endif
 
 	app.setDesktopSettingsAware(false);
 	app.setQuitOnLastWindowClosed(false);
