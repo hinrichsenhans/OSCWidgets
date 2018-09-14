@@ -187,7 +187,7 @@ void Toys::ClearLabels()
 
 void Toys::Recv(char *data, size_t len)
 {
-	if(data && len!=0 && !m_RecvWidgets.empty())
+	if(data && len!=0 && (!m_RecvWidgets.empty() || !m_WildcardRecvWidgets.empty()))
 	{
 		QString recvPath;
 		
@@ -200,16 +200,55 @@ void Toys::Recv(char *data, size_t len)
 				break;
 			}
 		}
-		
+
 		if( !recvPath.isEmpty() )
 		{
 			size_t argCount = 0xffffffff;
-			OSCArgument *args = OSCArgument::GetArgs(data, len, argCount);
+			OSCArgument *args = OSCArgument::GetArgs(data,len,argCount);
 
 			for(Toy::RECV_WIDGETS_RANGE range=m_RecvWidgets.equal_range(recvPath); range.first!=range.second; range.first++)
 			{
 				ToyWidget *w = range.first->second;
-				w->Recv(recvPath, args, argCount);
+				w->Recv(recvPath,args,argCount);
+			}
+
+			if(!m_WildcardRecvWidgets.empty())
+			{
+				QRegExp rx;
+				rx.setPatternSyntax(QRegExp::Wildcard);
+				rx.setCaseSensitivity(Qt::CaseSensitive);
+
+				// special-case for wildcard matches.  If no arguments, use last OSC address as a string argument				
+				OSCArgument pathArg;
+				QByteArray pathArgStr;
+
+				if(args==0 || argCount==0)
+				{
+					int index = recvPath.lastIndexOf(OSC_ADDR_SEPARATOR);
+					if(index >= 0)
+					{
+						QString str = recvPath.mid(index+1);
+						if( !str.isEmpty() )
+						{
+							pathArgStr = str.toUtf8();
+							pathArg.Init(OSCArgument::OSC_TYPE_STRING, pathArgStr.data(), pathArgStr.size()+1);
+						}
+					}
+				}
+
+				for(Toy::RECV_WIDGETS::const_iterator i=m_WildcardRecvWidgets.begin(); i!=m_WildcardRecvWidgets.end(); ++i)
+				{
+					const QString &path = i->first;
+					rx.setPattern(path);
+					if(rx.exactMatch(recvPath))
+					{
+						ToyWidget *w = i->second;
+						if(args==0 || argCount==0)
+							w->Recv(recvPath, &pathArg, 1);
+						else
+							w->Recv(recvPath, args, argCount);
+					}
+				}
 			}
 
 			if( args )
@@ -223,9 +262,23 @@ void Toys::Recv(char *data, size_t len)
 void Toys::BuildRecvWidgetsTable()
 {
 	m_RecvWidgets.clear();
-	
+	m_WildcardRecvWidgets.clear();
+
 	for(TOY_LIST::const_iterator i=m_List.begin(); i!=m_List.end(); i++)
 		(*i)->AddRecvWidgets(m_RecvWidgets);
+
+	for(Toy::RECV_WIDGETS::iterator i=m_RecvWidgets.begin(); i!=m_RecvWidgets.end(); )
+	{
+		const QString &path = i->first;
+		if( path.contains('*') )
+		{
+			ToyWidget *toy = i->second;
+			m_WildcardRecvWidgets.insert(Toy::RECV_WIDGETS_PAIR(path,toy));
+			m_RecvWidgets.erase(i++);
+		}
+		else
+			i++;
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////

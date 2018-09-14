@@ -31,6 +31,20 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
+OSCHandler::OSCHandler(Client &client)
+{
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+bool OSCHandler::ProcessPacket(OSCParserClient &client, char *buf, size_t size)
+{
+	m_pClient->OSCHandlerClient_Recv(client, buf, size);
+	return true;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 EosUdpOutThread::EosUdpOutThread()
 	: m_Port(0)
 	, m_Run(false)
@@ -255,10 +269,11 @@ void EosUdpInThread::run()
 		{
 			sockaddr_in addr;
 			
-			OSCParser logParser;
-			logParser.SetRoot(new OSCMethod());
+			OSCParser parser;
+			parser.SetRoot(new OSCHandler(*this));
 			
-			sPacket packet;
+			char *scratch = 0;
+			size_t scratchSize = 0;
 
 			// run
 			while( m_Run )
@@ -270,19 +285,31 @@ void EosUdpInThread::run()
 				{
 					QHostAddress host( reinterpret_cast<const sockaddr*>(&addr) );
 					m_Prefix = QString("IN  [%1:%2] ").arg( host.toString() ).arg(m_Port).toUtf8().constData();
-					logParser.PrintPacket(*this, data, len);
-					packet.size = static_cast<size_t>(len);
-					packet.data = new char[packet.size];
-					memcpy(packet.data, data, packet.size);
-					m_Mutex.lock();
-					m_Q.push_back(packet);
-					m_Mutex.unlock();
+					parser.PrintPacket(*this, data, static_cast<size_t>(len));
+
+					if(scratch!=0 && scratchSize<static_cast<size_t>(len))
+					{
+						delete[] scratch;
+						scratch = 0;
+					}
+
+					if(scratch == 0)
+					{
+						scratchSize = static_cast<size_t>(len);
+						scratch = new char[scratchSize];
+					}
+
+					memcpy(scratch, data, static_cast<size_t>(len));
+					parser.ProcessPacket(*this, scratch, static_cast<size_t>(len));
 				}
 			
 				UpdateLog();
 
 				msleep(1);
 			}
+
+			if(scratch != 0)
+				delete[] scratch;
 		}
 
 		delete udpIn;
@@ -321,6 +348,23 @@ void EosUdpInThread::OSCParserClient_Log(const std::string &message)
 {
 	m_LogMsg = (m_Prefix + message);
 	m_PrivateLog.Add(EosLog::LOG_MSG_TYPE_RECV, m_LogMsg);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void EosUdpInThread::OSCHandlerClient_Recv(OSCParserClient& /*client*/, char *buf, size_t size)
+{
+	if(buf!=0 && size!=0)
+	{
+		sPacket packet;
+		packet.size = size;
+		packet.data = new char[packet.size];
+		memcpy(packet.data, buf, packet.size);
+
+		m_Mutex.lock();
+		m_Q.push_back(packet);
+		m_Mutex.unlock();
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -415,8 +459,8 @@ void EosTcpClientThread::run()
 
 		if( tcp->Initialize(m_PrivateLog,m_Ip.toUtf8().constData(),m_Port) )
 		{
-			OSCParser logParser;
-			logParser.SetRoot(new OSCMethod());
+			OSCParser parser;
+			parser.SetRoot(new OSCHandler(*this));
 			std::string inPrefix = QString("TCPIN [%1:%2] ").arg(m_Ip).arg(m_Port).toUtf8().constData();
 			std::string outPrefix = QString("TCPOUT [%1:%2] ").arg(m_Ip).arg(m_Port).toUtf8().constData();
 			
@@ -455,10 +499,9 @@ void EosTcpClientThread::run()
 						{
 							m_Prefix = inPrefix;
 							m_LogMsgType = EosLog::LOG_MSG_TYPE_RECV;
-							logParser.PrintPacket(*this, packet.data, packet.size);
-							m_Mutex.lock();
-							m_RecvQ.push_back(packet);
-							m_Mutex.unlock();
+							parser.PrintPacket(*this, packet.data, packet.size);
+							parser.ProcessPacket(*this, packet.data, packet.size);
+							delete[] packet.data;
 						}
 						else
 							break;
@@ -481,7 +524,7 @@ void EosTcpClientThread::run()
 							{
 								m_Prefix = outPrefix;
 								m_LogMsgType = EosLog::LOG_MSG_TYPE_SEND;
-								logParser.PrintPacket(*this, i->data, i->size);
+								parser.PrintPacket(*this, i->data, i->size);
 							}
 							delete[] framedPacket.data;
 						}
@@ -537,6 +580,23 @@ void EosTcpClientThread::OSCParserClient_Log(const std::string &message)
 {
 	m_LogMsg = (m_Prefix + message);
 	m_PrivateLog.Add(m_LogMsgType, m_LogMsg);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void EosTcpClientThread::OSCHandlerClient_Recv(OSCParserClient& /*client*/, char *buf, size_t size)
+{
+	if(buf!=0 && size!=0)
+	{
+		sPacket packet;
+		packet.size = size;
+		packet.data = new char[packet.size];
+		memcpy(packet.data, buf, packet.size);
+
+		m_Mutex.lock();
+		m_RecvQ.push_back(packet);
+		m_Mutex.unlock();
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////

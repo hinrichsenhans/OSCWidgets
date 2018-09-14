@@ -89,6 +89,7 @@ protected:
 	bool				m_TopMost;
 	int					m_Opacity;
 	Toy::RECV_WIDGETS	m_RecvWidgets;
+	Toy::RECV_WIDGETS	m_WildcardRecvWidgets;
 	bool				m_Loading;
 	
 	virtual void BuildRecvWidgetsTable();

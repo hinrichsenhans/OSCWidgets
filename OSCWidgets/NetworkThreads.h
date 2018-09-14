@@ -55,6 +55,26 @@ typedef std::vector<EnumNetworkEvent> NETEVENT_Q;
 
 ////////////////////////////////////////////////////////////////////////////////
 
+class OSCHandler
+	: public OSCMethod
+{
+public:
+	class Client
+	{
+	public:
+		virtual void OSCHandlerClient_Recv(OSCParserClient &client, char *buf, size_t size) = 0;
+	};
+
+	OSCHandler(Client &client);
+
+	virtual bool ProcessPacket(OSCParserClient &client, char *buf, size_t size);
+
+protected:
+	Client *m_pClient;
+};
+
+////////////////////////////////////////////////////////////////////////////////
+
 class EosUdpOutThread
 	: public QThread
 	, private OSCParserClient
@@ -93,6 +113,7 @@ private:
 class EosUdpInThread
 	: public QThread
 	, private OSCParserClient
+	, private OSCHandler::Client
 {
 public:
 	EosUdpInThread();
@@ -119,6 +140,7 @@ protected:
 private:
 	virtual void OSCParserClient_Log(const std::string &message);
 	virtual void OSCParserClient_Send(const char *, size_t) {}
+	virtual void OSCHandlerClient_Recv(OSCParserClient &client, char *buf, size_t size);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -126,6 +148,7 @@ private:
 class EosTcpClientThread
 	: public QThread
 	, private OSCParserClient
+	, private OSCHandler::Client
 {
 public:
 	EosTcpClientThread();
@@ -157,6 +180,7 @@ protected:
 private:
 	virtual void OSCParserClient_Log(const std::string &message);
 	virtual void OSCParserClient_Send(const char *, size_t) {}
+	virtual void OSCHandlerClient_Recv(OSCParserClient &client, char *buf, size_t size);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
