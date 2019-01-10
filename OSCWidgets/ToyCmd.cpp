@@ -33,7 +33,8 @@ FadeCmd::FadeCmd(QWidget *parent)
 
 void FadeCmd::AutoSizeFont()
 {
-	QFont fnt( font() );
+	QFont fnt("Monospace");
+	fnt.setStyleHint(QFont::TypeWriter);
 	fnt.setPixelSize( qMax(10,qRound(height()*0.6)) );
 	setFont(fnt);
 }

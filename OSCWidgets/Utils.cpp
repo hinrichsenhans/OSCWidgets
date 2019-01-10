@@ -69,27 +69,25 @@ void Utils::GetItemsFromQuotedString(const QString &str, QStringList &items)
 		if(i>=len || (str[i]==QChar(',') && !quoted))
 		{
 			int itemLen = (i - index);
-			if(itemLen > 0)
+
+			QString item;
+			item.reserve(itemLen);
+			for(int j=0; j<itemLen; ++j)
 			{
-				QString item( str.mid(index,itemLen).trimmed() );
-
-				// remove quotes
-				if(item.startsWith('\"') && item.endsWith('\"'))
+				int itemIndex = (index + j);
+				if(str[itemIndex] == QChar('\"'))
 				{
-					itemLen = (item.size() - 2);
-					if(itemLen > 0)
-						item = item.mid(1, itemLen);
-					else
-						item.clear();
+					if((j+1)<itemLen && str[itemIndex+1]==QChar('\"'))
+					{
+						item.append(QChar('\"'));
+						++j;
+					}
 				}
-
-				// fix quoted quotes
-				item.replace("\"\"", "\"");
-
-				items.push_back(item);
+				else
+					item.append(str[itemIndex]);
 			}
-			else
-				items.push_back( QString() );
+
+			items.push_back(item.trimmed());
 
 			index = (i+1);
 		}
@@ -97,7 +95,9 @@ void Utils::GetItemsFromQuotedString(const QString &str, QStringList &items)
 		{
 			if( !quoted )
 				quoted = true;
-			else if((i+1)>=len || str[i+1]!=QChar('\"'))
+			else if((i+1)<len && str[i+1]==QChar('\"'))
+				++i;
+			else
 				quoted = false;
 		}
 	}
