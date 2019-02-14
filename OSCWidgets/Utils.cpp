@@ -1,4 +1,4 @@
-// Copyright (c) 2016 Electronic Theatre Controls, Inc., http://www.etcconnect.com
+// Copyright (c) 2018 Electronic Theatre Controls, Inc., http://www.etcconnect.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -69,27 +69,25 @@ void Utils::GetItemsFromQuotedString(const QString &str, QStringList &items)
 		if(i>=len || (str[i]==QChar(',') && !quoted))
 		{
 			int itemLen = (i - index);
-			if(itemLen > 0)
+
+			QString item;
+			item.reserve(itemLen);
+			for(int j=0; j<itemLen; ++j)
 			{
-				QString item( str.mid(index,itemLen).trimmed() );
-
-				// remove quotes
-				if(item.startsWith('\"') && item.endsWith('\"'))
+				int itemIndex = (index + j);
+				if(str[itemIndex] == QChar('\"'))
 				{
-					itemLen = (item.size() - 2);
-					if(itemLen > 0)
-						item = item.mid(1, itemLen);
-					else
-						item.clear();
+					if((j+1)<itemLen && str[itemIndex+1]==QChar('\"'))
+					{
+						item.append(QChar('\"'));
+						++j;
+					}
 				}
-
-				// fix quoted quotes
-				item.replace("\"\"", "\"");
-
-				items.push_back(item);
+				else
+					item.append(str[itemIndex]);
 			}
-			else
-				items.push_back( QString() );
+
+			items.push_back(item.trimmed());
 
 			index = (i+1);
 		}
@@ -97,7 +95,9 @@ void Utils::GetItemsFromQuotedString(const QString &str, QStringList &items)
 		{
 			if( !quoted )
 				quoted = true;
-			else if((i+1)>=len || str[i+1]!=QChar('\"'))
+			else if((i+1)<len && str[i+1]==QChar('\"'))
+				++i;
+			else
 				quoted = false;
 		}
 	}
@@ -300,7 +300,7 @@ void Utils::RegisterTouchWidget(QWidget &widget)
 #ifdef WIN32
 	if(sm_pFuncRegisterTouchWindow==0 || sm_pFuncUnregisterTouchWindow==0)
 	{
-		HMODULE hModule = GetModuleHandle("user32");
+        HMODULE hModule = GetModuleHandle(L"user32");
 		if( hModule )
 		{
 			sm_pFuncRegisterTouchWindow = GetProcAddress(hModule,"RegisterTouchWindow");
@@ -311,8 +311,8 @@ void Utils::RegisterTouchWidget(QWidget &widget)
 
 	if(sm_pFuncRegisterTouchWindow && sm_pFuncUnregisterTouchWindow)
 	{
-		reinterpret_cast<FuncUnregisterTouchWindow>(sm_pFuncUnregisterTouchWindow)(widget.winId());
-		reinterpret_cast<FuncRegisterTouchWindow>(sm_pFuncRegisterTouchWindow)(widget.winId(),TWF_WANTPALM);
+        reinterpret_cast<FuncUnregisterTouchWindow>(sm_pFuncUnregisterTouchWindow)((HWND)widget.winId());
+        reinterpret_cast<FuncRegisterTouchWindow>(sm_pFuncRegisterTouchWindow)((HWND)widget.winId(),TWF_WANTPALM);
 	}
 #endif
 }

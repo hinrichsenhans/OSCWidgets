@@ -1,4 +1,4 @@
-// Copyright (c) 2016 Electronic Theatre Controls, Inc., http://www.etcconnect.com
+// Copyright (c) 2018 Electronic Theatre Controls, Inc., http://www.etcconnect.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -89,6 +89,7 @@ protected:
 	bool				m_TopMost;
 	int					m_Opacity;
 	Toy::RECV_WIDGETS	m_RecvWidgets;
+	Toy::RECV_WIDGETS	m_WildcardRecvWidgets;
 	bool				m_Loading;
 	
 	virtual void BuildRecvWidgetsTable();

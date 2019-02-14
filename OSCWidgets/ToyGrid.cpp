@@ -1,4 +1,4 @@
-// Copyright (c) 2016 Electronic Theatre Controls, Inc., http://www.etcconnect.com
+// Copyright (c) 2018 Electronic Theatre Controls, Inc., http://www.etcconnect.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -895,7 +895,6 @@ void ToyGrid::resizeEvent(QResizeEvent *event)
 void ToyGrid::contextMenuEvent(QContextMenuEvent *event)
 {
 	QString name;
-	GetName(name);
 	
 	QMenu menu(this);
 	
@@ -942,6 +941,8 @@ void ToyGrid::contextMenuEvent(QContextMenuEvent *event)
 		menu.addMenu(gridSizeMenu);
 	}
 
+	GetName(name);
+	
 	if( hasLayoutMode )
 		menu.addAction(QIcon(":/assets/images/MenuIconSettings.png"), tr("Layout Mode..."), this, SLOT(onLayoutMode()));
 	else
